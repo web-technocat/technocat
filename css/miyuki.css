@@ -1,0 +1,43 @@
+@charset 'utf-8';
+
+/* ----全体のスタイル --------------------------------------------*/
+
+* {
+  box-sizing: border-box;
+}
+
+/* bodyの背景色 */
+body {
+  background-color: gray;
+}
+
+/* 画面幅調整 */
+.container {
+  width: 375px;
+  min-height: 900px;
+  margin: 0 auto;
+  background: #fff;
+}
+
+.main_contents {
+  padding: 24px;
+}
+
+/* リンクのスタイルを初期化 */
+a:link,
+a:visited,
+a:hover,
+a:active {
+  text-decoration: none;
+  color: #454545;
+}
+
+/* リストの点を消す */
+li {
+  list-style: none;
+}
+
+/* ボタンのカーソル設定 */
+.btn {
+  cursor: pointer;
+}
