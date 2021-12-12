@@ -1,0 +1,55 @@
+<?php
+//-------トークルームを作るPHPです---------------------------------//
+
+//セッションの開始
+session_start();
+//関数ファイル読み込み
+include('functions.php');
+//セッション状態の確認とセッションID再生成
+check_session_id();
+
+
+//データの入力確認
+if (
+  !isset($_POST['room_name']) || $_POST['room_name'] == '' ||
+  !isset($_POST['room_type']) || $_POST['room_type'] == '' 
+) {
+  exit('ParamError'); //エラーを返す
+}
+
+//変数に代入
+$user_id = $_SESSION['user_id'];
+$room_name = $_POST['room_name'];
+$room_type = $_POST['room_type'];
+
+// echo '<pre>';
+// var_dump($user_id);
+// var_dump($room_name);
+// var_dump($room_type);
+// echo '</pre>';
+
+// DB接続
+$pdo = connect_to_db(); //データベース接続の関数、$pdoに受け取る
+
+//SQL 登録処理実行
+$sql = 'INSERT INTO room_table(id,room_name,room_type,created_at,host_user) VALUES(NULL,:room_name,:room_type,now(),:user_id)';
+
+$stmt = $pdo->prepare($sql);
+$stmt->bindValue(':room_name',$room_name,PDO::PARAM_STR);
+$stmt->bindValue(':room_type',$room_type, PDO::PARAM_STR);
+$stmt->bindValue(':user_id', $user_id, PDO::PARAM_STR);
+
+try {
+  $status = $stmt->execute();
+} catch (PDOException $e) {
+  echo json_encode(["sql error" => "{$e->getMessage()}"]);
+  exit();
+}
+
+//処理が終わった後のページ移動
+header("Location:room_list.php");
+exit();
+
+
+
+?>
