@@ -9,10 +9,13 @@ include('functions.php');
 check_session_id();
 
 // DB接続
-$pdo = connect_to_db(); //データベース接続の関数、$pdoに受け取る
+$pdo = connect_to_db();
 
-//SQL処理 room_tableから情報取得
-$sql = 'SELECT * FROM room_table INNER JOIN users_table ON room_table.host_user = users_table.id ORDER BY room_table.created_at DESC';
+//SQL処理 room_table(x)とusers_table(y)を結合して取得
+$sql = 'SELECT x.id,room_name,room_type,host_user,username
+FROM  room_table as x LEFT JOIN users_table as y 
+ON x.host_user = y.id ORDER BY x.created_at DESC';
+
 $stmt = $pdo->prepare($sql);
 
 try {
@@ -21,16 +24,12 @@ try {
   echo json_encode(["sql error" => "{$e->getMessage()}"]);
   exit();
 }
-
+//$resultに結果を受け取る
 $result = $stmt->fetchAll(PDO::FETCH_ASSOC);
 
-// echo '<pre>';
-// var_dump($result);
-// echo '</pre>';
-// exit();
 
-//繰り返し処理を用いて，取得したデータから HTML タグを生成する
-$output = ""; //表示のための変数を定義
+//取得したデータにHTMLタグをつける
+$output = "";
 foreach ($result as $record) {
   $output .= "
     <a href=member_list.php?id={$record["id"]}><li>{$record["room_name"]} type:{$record["room_type"]} host:{$record["username"]}</li></a>
@@ -70,8 +69,7 @@ foreach ($result as $record) {
       <!-- 検索部分 -->
       <section>
         <form action="">
-          <input type="text">
-          <button>serch</button>
+          search:<input type="text" id="search">
         </form>
       </section>
 
@@ -84,8 +82,8 @@ foreach ($result as $record) {
 
       <!-- トークルーム一覧出力部分 -->
       <section id="room_section">
-        <ul id="room_list">
-          <?= $output?>
+        <ul id="result">
+          <?= $output ?>
           <ul>
       </section>
 
@@ -107,6 +105,38 @@ foreach ($result as $record) {
 
   <!-- jquery読み込み -->
   <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
+  <!-- axios読み込み -->
+  <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
+
+  <script>
+    //検索ワード入力欄のキーを上げたら発動
+    $('#search').on('keyup', function(e) {
+      console.log(e.target.value); //入力文字をコンソールに出す
+      const searchWord = e.target.value; //入力された値
+      const requestUrl = "room_search.php"; //送信先ファイル
+
+      axios
+        .get(`${requestUrl}?searchword=${searchWord}`)
+        .then(function(response) {//responseにデータ受け取り
+          //console.log(response);
+          //表示のための配列
+          const array = [];
+
+          //response.dateに繰り返し処理でタグをつける
+          response.data.forEach(function(x) {
+            array.push(`<a href=member_list.php?id=${x.id}><li>${x.room_name} type:${x.room_type} host:${x.username}</li></a>`);
+          });
+          $('#result').html(array); //id=resultのhtmlを上書き
+        })
+        .catch(function(error) {
+          console.log(error);//失敗したらコンソールにエラーを出す
+        })
+        .finally(function() {
+          // 省略
+        });
+
+    });
+  </script>
 
 </body>
 
