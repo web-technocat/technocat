@@ -1,6 +1,7 @@
 <?php
 //--------トークルームに入っている人の一覧ページです----------------
 
+//ルームIDを取得
 $room_id = $_GET['id'];
 
 //セッションの開始
@@ -11,10 +12,13 @@ include('functions.php');
 check_session_id();
 
 // DB接続
-$pdo = connect_to_db(); //データベース接続の関数、$pdoに受け取る
+$pdo = connect_to_db();
 
-//SQL処理 room_tableから情報取得
-$sql = 'SELECT * FROM room_table INNER JOIN users_table ON room_table.host_user = users_table.id WHERE room_table.id = :room_id';
+//SQL処理 users_table(x)とroom_table(y)を結合して取得
+$sql = 'SELECT x.id,room_name,room_type,host_user,username
+FROM  room_table as x LEFT JOIN users_table as y 
+ON x.host_user = y.id WHERE x.id = :room_id';
+
 $stmt = $pdo->prepare($sql);
 $stmt->bindValue(':room_id', $room_id, PDO::PARAM_STR);
 
@@ -25,12 +29,33 @@ try {
   exit();
 }
 
+//$resultにデータを取得
 $result = $stmt->fetch(PDO::FETCH_ASSOC);
 
-// echo '<pre>';
-// var_dump($result);
-// echo '</pre>';
-// exit();
+//SQL処理 checkin_table(x)とusers_table(y)を結合して取得
+$sql = 'SELECT x.room_id,y.username
+FROM checkin_table as x LEFT JOIN users_table as y 
+ON x.user_id = y.id where x.room_id = :room_id';
+
+$stmt = $pdo->prepare($sql);
+$stmt->bindValue(':room_id', $room_id, PDO::PARAM_STR);
+
+try {
+  $status = $stmt->execute();
+} catch (PDOException $e) {
+  echo json_encode(["sql error" => "{$e->getMessage()}"]);
+  exit();
+}
+
+//$memberにデータを取得
+$members = $stmt->fetchAll(PDO::FETCH_ASSOC);
+
+// タグをつけて表示
+foreach ($members as $member) {
+  $member_list .= "
+    <li>{$member['username']}</li>
+  ";
+}
 
 ?>
 
@@ -53,6 +78,7 @@ $result = $stmt->fetch(PDO::FETCH_ASSOC);
 <body>
   <div id="wrapper_y">
     <div class="main_contents">
+
       <!-- ヘッダー部分 -->
       <header>
         <h1>Member List</h1>
@@ -61,6 +87,9 @@ $result = $stmt->fetch(PDO::FETCH_ASSOC);
       <!-- 仮ログアウトボタン -->
       <a href="todo_logout.php">logout</a>
 
+      <!-- 仮戻るボタン -->
+      <a href="room_list.php">戻る</a>
+
       <!-- ルーム詳細表示部分 -->
       <section id="room_infometion">
         <h1><?= $result['room_name'] ?></h1>
@@ -68,10 +97,19 @@ $result = $stmt->fetch(PDO::FETCH_ASSOC);
       </section>
 
       <!-- ルームメンバー表示部分 -->
+      <section id="join_member">
+        <ul>
+          <?= $member_list ?>
+        </ul>
+      </section>
 
-
-      <!-- 入室ボタン -->
-      <a href="check_in.php?room_id=<?=$result['room_table.id']?><button type="submit" id="join_btn">Join</button></a>
+      <!-- 入室ボタン部分 -->
+      <form action="check_in.php" method="post">
+        <!-- ルームナンバーを送るためのinput hidden -->
+        <input type="hidden" name="room_id" value=<?= $result['id'] ?>>
+        <!-- 入室ボタン Join! -->
+        <button type="submit" id="join_btn">Join</button>
+      </form>
 
     </div>
     <!-- main_contentsここまで -->
@@ -93,5 +131,4 @@ $result = $stmt->fetch(PDO::FETCH_ASSOC);
   <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
 
 </body>
-
 </html>

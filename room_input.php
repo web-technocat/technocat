@@ -8,9 +8,7 @@ include('functions.php');
 //セッション状態の確認とセッションID再生成
 check_session_id();
 
-
 ?>
-
 
 <!DOCTYPE html>
 <html lang="ja">
