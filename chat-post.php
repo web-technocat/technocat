@@ -10,7 +10,7 @@ $trans_text = $_POST['trans-text'];
 
 $pdo = connect_to_db();
 
-$sql = 'INSERT INTO log_table (id, text, trans_text, user_id, room_id, created_at, updated_at) VALUES (null, :text, :trans_text, 1, 1, now(), now())';
+$sql = 'INSERT INTO log_table (id, text, trans_text, user_id, room_id, created_at, updated_at) VALUES (null, :text, :trans_text, 2, 1, now(), now())';
 
 $stmt = $pdo->prepare($sql);
 $stmt->bindValue(':text', $text, PDO::PARAM_STR);
