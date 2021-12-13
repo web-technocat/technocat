@@ -29,6 +29,9 @@ try {
   exit();
 }
 
+//セッションにルームIDを渡す
+$_SESSION['room_id'] = $room_id;
+
 //処理が終わった後はトークルーム内へ移動
 header("Location:takeshi.php");
 exit();

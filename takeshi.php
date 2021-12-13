@@ -3,8 +3,18 @@
 //仮のトークルームファイル
 //退出ボタンを設置
 
-//たけたけし
-//にゃー
+//セッションの開始
+session_start();
+//関数ファイル読み込み
+include('functions.php');
+//セッション状態の確認とセッションID再生成
+check_session_id();
+
+
+// var_dump($_SESSION);
+// exit();
+
+//<?=htmlspecialchars($hoge, ENT_QUOTES);
 
 ?>
 
@@ -31,19 +41,8 @@
 
 
 
-      </div>
-      <!-- main_contentsここまで -->
-
-      <!-- フッター部分 -->
-      <footer class="footer_y">
-        <div id="footer_contents">
-          <div class="footer_btn">ボタン1</div>
-          <div class="footer_btn">ボタン2</div>
-          <div class="footer_btn">ボタン3</div>
-        </div>
-      </footer>
-      <!-- フッター部分ここまで -->
-
+    </div>
+    <!-- main_contentsここまで -->
   </div>
   <!--wrapperここまで -->
 

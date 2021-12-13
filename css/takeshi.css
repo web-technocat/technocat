@@ -16,6 +16,7 @@ body {
   min-height: 900px;
   margin: 0 auto;
   background: #fff;
+  position: relative;
 }
 
 /* メイン画面のパディング */
@@ -48,7 +49,7 @@ li {
 .footer_y {
   position: fixed;
   bottom: 0;
-  z-index: 10px;
+  z-index: 10;
 }
 
 #footer_contents {
@@ -64,16 +65,142 @@ li {
   border: 1px solid #000;
   height: 64px;
   width: 25%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.la-home {
+  font-size: 56px;
+}
+
+/* -----ヘッダー共通部分 --------------------------------------------*/
+
+/* ヘッダー部分 */
+header {
+  padding: 8px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+/* メインタイトル */
+#main_title_y {
+  font-size: 24px;
+}
+
+/* ハンバーガーメニューボタン */
+.la-bars {
+  font-size: 48px;
+}
+
+/* プロフィール画像 */
+.profile_img {
+  width: 48px;
+  height: 48px;
+  border-radius: 50%;
+  margin-right: 8px;
+}
+
+/* --ハンバーガーメニューのスタイル --*/
+
+/* 背景 */
+#mask {
+  height: 100%;
+  width: 375px;
+  position: fixed;
+  background-color: rgba(0,0,0, 0.6);
+  z-index: 11;
+}
+
+/* 閉じるボタン */
+#clese_btn {
+  font-size: 48px;
+  color: #fff;
+  padding: 12px;
+}
+
+/* メニュー本体 */
+#menu_contents {
+  background-color: #fff;
+  position: absolute;
+  width: 250px;
+  min-height: 800px;
+  right: 0;
+  z-index: 12;
+}
+
+/* アカウント表示部分 */
+#my_acount {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  margin-top: 24px;
+}
+
+/* メニューリスト部分 */
+#menu_list {
+  margin-top: 48px;
+  text-align: center;
+}
+
+/* メニューリストのスペース調整 */
+#menu_list li {
+  margin-bottom: 16px;
+}
+
+/* ログアウトボタン部分 */
+#logout_btn {
+  margin-top: 48px;
+  display: flex;
+  justify-content: center;
+}
+
+/* ログアウトボタン本体 */
+#logout_btn div{
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  font-size: 18px;
+  border: 1px solid #454545;
+  border-radius: 10px;
+  height: 48px;
+  width: 120px;
 }
 
 /* ----room_list.phpのスタイル-------------------------------------- */
+
+/* ----検索部分 ----------*/
+#main_top {
+  display: flex;
+  justify-content: space-around;
+  align-items: center;
+}
+
+/* 検索欄 */
+#search {
+  width: 200px;
+  height: 36px;
+  font-size: 16px;
+}
+
+/* ルーム追加用プラスボタン */
+#add_btn {
+  width: 56px;
+  height: 56px;
+  border-radius: 50%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  background-color:gray;
+  color: #fff;
+  font-size: 24px;
+}
 
 /* ルーム一覧表示部分 */
 #room_section {
   margin-top: 48px;
 }
-
-
 
 /* ----member_list.phpのスタイル------------------------------------ */
 
