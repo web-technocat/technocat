@@ -53,9 +53,14 @@ $members = $stmt->fetchAll(PDO::FETCH_ASSOC);
 // タグをつけて表示
 foreach ($members as $member) {
   $member_list .= "
-    <li>{$member['username']}</li>
+    <li><img src =./img/null.png class=profile_img>{$member['username']}</li>
   ";
 }
+
+//タイトル表示のための変数
+$title = "room infomation";
+//ユーザー名表示のための変数
+$username = $_SESSION['username'];
 
 ?>
 
@@ -73,27 +78,25 @@ foreach ($members as $member) {
   <!-- takeshi.css読み込み -->
   <link rel="stylesheet" href="./css/takeshi.css">
 
+  <!-- line-awesome読み込み -->
+  <link rel="stylesheet" href="https://maxst.icons8.com/vue-static/landings/line-awesome/line-awesome/1.3.0/css/line-awesome.min.css">
+
 </head>
 
 <body>
   <div id="wrapper_y">
+
+    <?php
+    //ヘッダーの読み込み
+    include('./takeshi/header_takeshi.php');
+    ?>
+
     <div class="main_contents">
-
-      <!-- ヘッダー部分 -->
-      <header>
-        <h1>Member List</h1>
-      </header>
-
-      <!-- 仮ログアウトボタン -->
-      <a href="todo_logout.php">logout</a>
-
-      <!-- 仮戻るボタン -->
-      <a href="room_list.php">戻る</a>
-
+      
       <!-- ルーム詳細表示部分 -->
       <section id="room_infometion">
-        <h1><?= $result['room_name'] ?></h1>
-        <h2>host:<?= $result['username'] ?></h2>
+        <h1><?= htmlspecialchars($result['room_name'], ENT_QUOTES);?></h1>
+        <h2>host:<?= htmlspecialchars($result['username'], ENT_QUOTES);?></h2>
       </section>
 
       <!-- ルームメンバー表示部分 -->
@@ -106,7 +109,7 @@ foreach ($members as $member) {
       <!-- 入室ボタン部分 -->
       <form action="check_in.php" method="post">
         <!-- ルームナンバーを送るためのinput hidden -->
-        <input type="hidden" name="room_id" value=<?= $result['id'] ?>>
+        <input type="hidden" name="room_id" value=<?= htmlspecialchars($result['id'], ENT_QUOTES);?>>
         <!-- 入室ボタン Join! -->
         <button type="submit" id="join_btn">Join</button>
       </form>
@@ -114,15 +117,11 @@ foreach ($members as $member) {
     </div>
     <!-- main_contentsここまで -->
 
-    <!-- フッター部分 -->
-    <footer class="footer_y">
-      <div id="footer_contents">
-        <div class="footer_btn">ボタン1</div>
-        <div class="footer_btn">ボタン2</div>
-        <div class="footer_btn">ボタン3</div>
-      </div>
-    </footer>
-    <!-- フッター部分ここまで -->
+    <?php
+    //フッターの読み込み
+    include('./takeshi/footer_takeshi.php');
+
+    ?>
 
   </div>
   <!--wrapperここまで -->
@@ -130,5 +129,9 @@ foreach ($members as $member) {
   <!-- jquery読み込み -->
   <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
 
+  <!-- takeshi.js読み込み -->
+  <script src="./js/takeshi.js"></script>
+
 </body>
+
 </html>

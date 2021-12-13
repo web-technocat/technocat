@@ -8,6 +8,11 @@ include('functions.php');
 //セッション状態の確認とセッションID再生成
 check_session_id();
 
+//タイトル表示のための変数
+$title = "create room";
+//ユーザー名表示のための変数
+$username = $_SESSION['username'];
+
 ?>
 
 <!DOCTYPE html>
@@ -24,21 +29,22 @@ check_session_id();
   <link rel="stylesheet" href="./css/reset.css">
   <!-- takeshi.css読み込み -->
   <link rel="stylesheet" href="./css/takeshi.css">
+  <!-- line-awesome読み込み -->
+  <link rel="stylesheet" href="https://maxst.icons8.com/vue-static/landings/line-awesome/line-awesome/1.3.0/css/line-awesome.min.css">
 </head>
 
 <body>
   <div id="wrapper_y">
+
+    <?php
+    //ヘッダーの読み込み
+    include('./takeshi/header_takeshi.php');
+    ?>
+
+
     <div class="main_contents">
-
-      <!-- ヘッダー部分 -->
-      <header>
-        <h1>Room Input</h1>
-      </header>
-
-      <!-- ルーム一覧に戻る -->
-      <a href="room_list.php">戻る</a>
-
-      <!-- 入力欄 -->
+      
+      <!-- 入力フォーム -->
       <form action="room_create.php" method="post">
 
         <!-- ルームネームを入力 -->
@@ -46,9 +52,6 @@ check_session_id();
           <p>Room Name</p>
           <input type="text" name="room_name">
         </div>
-
-        <!-- 仮ログアウトボタン -->
-        <a href="todo_logout.php">logout</a>
 
         <!-- 部屋のタイプを選択 -->
         <div>
@@ -63,21 +66,18 @@ check_session_id();
     </div>
     <!--main_contentsここまで -->
 
-    <!-- フッター部分 -->
-    <footer class="footer_y">
-      <div id="footer_contents">
-        <div class="footer_btn">ボタン1</div>
-        <div class="footer_btn">ボタン2</div>
-        <div class="footer_btn">ボタン3</div>
-      </div>
-    </footer>
-    <!-- フッター部分ここまで -->
+    <?php
+    //フッターの読み込み
+    include('./takeshi/footer_takeshi.php');
+    ?>
 
   </div>
   <!--wrapperここまで -->
 
   <!-- jquery読み込み -->
   <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
+  <!-- takeshi.js読み込み -->
+  <script src="./js/takeshi.js"></script>
 
 </body>
 
