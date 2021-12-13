@@ -89,7 +89,7 @@ foreach ($result as $record) {
             top: 46px;
             display: flex;
             width: 375px;
-            height: calc(100% - 120px);
+            height: calc(100% - 184px);
             flex-direction: column;
             align-items: center;
             margin: 0 auto;
@@ -137,34 +137,60 @@ foreach ($result as $record) {
             margin-right: auto;
         }
 
-        footer {
+        .chat-input {
             position: fixed;
             width: 375px;
-            bottom: 0;
+            bottom: 66px;
             border-top: 2px solid #333333;
             background: white;
         }
 
-        footer > div {
+        .chat-input > div {
             display: flex;
             justify-content: center;
             align-items: center;
             padding: 8px 0;
         }
 
-        footer > div > textarea {
-            width: 64%;
+        .chat-input > div > textarea {
+            width: calc(80% + 16px);
             height: 48px;
             font-size: 20px;
             resize: none;
         }
 
-        footer > div > button {
+        .chat-input > div > button {
+            display: none;
             width: 16%;
             height: 48px;
             padding: 2px;
             font-size: 20px;
             margin-left: 16px;
+        }
+
+        .chat-input > div > button.active {
+            display: block;
+        }
+        /* フッター全体 */
+        .footer_y {
+            position: fixed;
+            bottom: 0;
+            z-index: 10px;
+        }
+
+        #footer_contents {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            background-color: lightgray;
+            width: 375px;
+        }
+
+        /* フッターボタン */
+        .footer_btn {
+            border: 1px solid #000;
+            height: 64px;
+            width: 25%;
         }
     </style>
 </head>
@@ -182,12 +208,19 @@ foreach ($result as $record) {
         <div id="output">
             <?=$output?>
         </div>
+        <div class="chat-input">
+            <div>
+                <textarea id="text-form"></textarea>
+                <button id="send"><i class="fas fa-paper-plane"></i></button>
+            </div>
+        </div>
     </main>
 
-    <footer>
-        <div>
-            <textarea id="text-form"></textarea>
-            <button id="send"><i class="fas fa-paper-plane"></i></button>
+    <footer class="footer_y">
+        <div id="footer_contents">
+            <div class="footer_btn">ボタン1</div>
+            <div class="footer_btn">ボタン2</div>
+            <div class="footer_btn">ボタン3</div>
         </div>
     </footer>
 
@@ -199,60 +232,85 @@ foreach ($result as $record) {
             $('#output')[0].scrollIntoView(false);
         });
 
+        // setInterval(function(){
+        //     axios({
+        //         method: 'get',
+        //         url: 'stream.php',
+        //     })
+        //     .then(function(response) {
+        //         console.log(response);
+        //     });
+        // }, 1000);
+
+
+        $('#text-form').on('change', function() {
+            if ($('#text-form').val() !== '') {
+                $('#send').addClass('active');
+                $('#text-form').css('width', '64%');
+            } else {
+                $('#send').removeClass('active');
+                $('#text-form').css('width', 'calc(80% + 16px)');
+            }
+        });
+
         $('#send').on('click', function () {
             const text = $('#text-form').val();
-            const textFormData = new FormData();
-            textFormData.append('text', text);
-            axios
-            .get(`translate.php?text=${text}`)
-            .then(function(response){
-                // console.log(response);
-                const transTextFormData = new FormData();
-                transTextFormData.append('text', text);
-                transTextFormData.append('trans-text', response.data);
-                axios({
-                    method: 'post',
-                    url: 'chat-post.php',
-                    data: transTextFormData,
-                    headers: { "Content-Type": "multipart/form-data" },
-                })
-                .then(function(response) {
-                // console.log(response);
-                const array = [];
-                response.data.forEach(value => {
-                    const date = new Date().getTime();
-                    const timestamp = new Date(value.created_at).getTime();
-                    const time_diff = (date - timestamp) / 1000;
-                    let result_time_diff;
-                    if (Math.floor(time_diff / 60) == 0) {
-                        result_time_diff = `たった今`;
-                    } else if (Math.floor(time_diff / 60) <= 59) {
-                        const minute_diff = Math.floor(time_diff / 60);
-                        result_time_diff = `${minute_diff}分前に`;
-                    } else if (Math.floor(time_diff / 3600) <= 23) {
-                        const hour_diff = Math.floor(time_diff / 3600);
-                        result_time_diff = `${hour_diff}時間前に`;
-                    } else {
-                        const date_diff = Math.floor(time_diff / 86400);
-                        result_time_diff = `${date_diff}日前に`;
-                    }
-                    if (value.user_id == 1) {
-                        array.push(`<div class='log my-log'><p>${value.user_id}<span> ${result_time_diff}投稿</span></p><p class='oritext'>${value.text}</p><p>${value.trans_text}</p><div>`);
-                    } else {
-                        array.push(`<div class='log other-log'><p>${value.user_id}<span> ${result_time_diff}投稿</span></p><p class='oritext'>${value.text}</p><p>${value.trans_text}</p><div>`);
-                    }
+            if (text !== '') {
+                const textFormData = new FormData();
+                textFormData.append('text', text);
+                axios
+                .get(`translate.php?text=${text}`)
+                .then(function(response){
+                    // console.log(response);
+                    const transTextFormData = new FormData();
+                    transTextFormData.append('text', text);
+                    transTextFormData.append('trans-text', response.data);
+                    axios({
+                        method: 'post',
+                        url: 'chat-post.php',
+                        data: transTextFormData,
+                        headers: { "Content-Type": "multipart/form-data" },
+                    })
+                    .then(function(response) {
+                    // console.log(response);
+                    const array = [];
+                    response.data.forEach(value => {
+                        const date = new Date().getTime();
+                        const timestamp = new Date(value.created_at).getTime();
+                        const time_diff = (date - timestamp) / 1000;
+                        let result_time_diff;
+                        if (Math.floor(time_diff / 60) == 0) {
+                            result_time_diff = `たった今`;
+                        } else if (Math.floor(time_diff / 60) <= 59) {
+                            const minute_diff = Math.floor(time_diff / 60);
+                            result_time_diff = `${minute_diff}分前に`;
+                        } else if (Math.floor(time_diff / 3600) <= 23) {
+                            const hour_diff = Math.floor(time_diff / 3600);
+                            result_time_diff = `${hour_diff}時間前に`;
+                        } else {
+                            const date_diff = Math.floor(time_diff / 86400);
+                            result_time_diff = `${date_diff}日前に`;
+                        }
+                        if (value.user_id == 1) {
+                            array.push(`<div class='log my-log'><p>${value.user_id}<span> ${result_time_diff}投稿</span></p><p class='oritext'>${value.text}</p><p>${value.trans_text}</p><div>`);
+                        } else {
+                            array.push(`<div class='log other-log'><p>${value.user_id}<span> ${result_time_diff}投稿</span></p><p class='oritext'>${value.text}</p><p>${value.trans_text}</p><div>`);
+                        }
+                    });
+                    $('#output').html(array);
+                    })
+                    .catch(function(error) {
+                    console.log('post error');
+                    console.log(error);
+                    })
+                    .finally(function() {
+                    console.log('ajax done!');
+                    $('#text-form').val('');
+                    });
                 });
-                $('main').html(array);
-                })
-                .catch(function(error) {
-                console.log('post error');
-                console.log(error);
-                })
-                .finally(function() {
-                console.log('ajax done!');
-                $('#text-form').val('');
-                });
-            });
+            } else {
+                $('#text-form').attr('placeholder', '不正な操作です');
+            }
         });
     </script>
 </body>
