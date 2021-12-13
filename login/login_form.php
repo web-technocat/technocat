@@ -53,6 +53,7 @@ session_destroy();
     </div>
     </form>
     <p>新規登録の方は<a href="../User/user_input.php">こちら</a></p>
+    <p>プロフィール登録の方は<a href="../Profile/profile_input.php">こちら</a></p>
   </div>
 
 </body>

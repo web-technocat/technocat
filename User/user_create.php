@@ -3,42 +3,61 @@
 // var_dump($_POST);
 // exit();
 
-//DB接続
-include('functions.php');
+//セッション開始
+session_start();
+//関数読み込み
+include('../functions.php');
 
-//入力項目のチェック
-if (
-  !isset($_POST['username']) || $_POST['username'] == '' ||
-  !isset($_POST['email']) || $_POST['email'] == '' ||
-  !isset($_POST['password']) || $_POST['password'] == ''
-) {
-  echo json_encode(["error_msg" => "no input"]);
-  exit();
+// //入力項目のチェック
+// if (
+//   !isset($_POST['username']) || $_POST['username'] == '' ||
+//   !isset($_POST['email']) || $_POST['email'] == '' ||
+//   !isset($_POST['password']) || $_POST['password'] == ''
+// ) {
+//   echo json_encode(["error_msg" => "no input"]);
+//   exit();
+// }
+
+// //データの受け取り
+// $username = $_POST["username"];
+// $email = $_POST["email"];
+
+
+//-----バリデーション-----//
+//エラーメッセージ
+$err = [];
+//ユーザーネーム
+if(!$username = $_POST['username']){
+  $err['username'] = 'ユーザー名を入力してください!!';
 }
-
-//データの受け取り
-$username = $_POST["username"];
-// if (!$username = $_POST['username']) {
-//   $err['username'] = 'ユーザー名を記入してください';
-// }
 //メールアドレス
-$email = $_POST["email"];
-// if (!$email = $_POST['email']) {
-//   $err['email'] = 'メールアドレスを記入してください';
-// }
-//パスワード(正規表現を使う)
+if (!$email = $_POST['email']) {
+  $err['email'] = 'メールアドレスを入力してください!!';
+  //sessionは連想配列
+}
+//パスワード
 $password = password_hash($_POST['password'], PASSWORD_DEFAULT);
-//正規表現
-// if (!preg_match("/\A[a-z\d]{8,100}+\z/i", $password)) {
-//   $err['password'] = 'パスワードは英数字8文字以上100文字以下にしてください';
-// }
+if (!$password = $_POST['password']) {
+  $err['password'] = 'パスワードを入力してください!!';
+  //sessionは連想配列
+};
+
 
 //DB接続
 $pdo = connect_to_db();
 
+//-----新規登録時にエラーがあった場合に新規登録フォームに表示-----//
+if (count($err) > 0) {
+  //エラーがあった場合
+  //セッションにエラーメッセージを入れて、ログイン画面に戻す
+  $_SESSION = $err;
+  header('Location:user_input.php');
+  return; //処理を止める
+};
+
 //フォームに入力されたmailがすでに登録されていないかチェック
 //SQL作成
-$sql = 'SELECT COUNT(*) FROM users_table WHERE email=:email';
+$sql = 'SELECT * FROM users_table WHERE email=:email';
 //SQL準備
 $stmt = $pdo->prepare($sql);
 //バインド変数
@@ -50,31 +69,74 @@ try {
   echo json_encode(["sql error" => "{$e->getMessage()}"]);
   exit();
 }
-//メールアドレス重複処理
-if ($stmt->fetchColumn() > 0) {
-  echo '<p>同じメールアドレスが存在します．</p>';
-  echo '<a href="user_input.php">戻る</a>';
-  exit();
+// 実行内容
+$member = $stmt->fetch(PDO::FETCH_ASSOC);
+if ($member['email'] === $email) {
+  $message = "<p>同じメールアドレスが存在します．</p>";
+  $link = "<a href=user_input.php>戻る</a>";
 }
+
+
+// var_dump($status);
+// exit();
+//メールアドレス重複処理
+// if ($member->fetchColumn() > 0) {
+//   $message = "<p>同じメールアドレスが存在します．</p>";
+//   $link = "<a href=user_input.php>戻る</a>";
+//   // echo '<p>同じメールアドレスが存在します．</p>';
+//   // echo '<a href="user_input.php">戻る</a>';
+//   // exit();
+// }
 
 
 //ユーザー登録処理
-//SQL作成
-$sql = 'INSERT INTO users_table (id,username,email,password,is_admin,is_deleted,created_at,updated_at) VALUES(NULL,:username,:email,:password,0,0,now(),now())';
-//SQl準備
-$stmt = $pdo->prepare($sql);
-//バインド変数
-$stmt->bindValue(':username', $username, PDO::PARAM_STR);
-$stmt->bindValue(':email', $email, PDO::PARAM_STR);
-$stmt->bindValue(':password', $password, PDO::PARAM_STR);
-//SQL実行
-try {
-  $status = $stmt->execute();
-} catch (PDOException $e) {
-  echo json_encode(["sql error" => "{$e->getMessage()}"]);
-  exit();
+if(count($err)===0){
+  //SQL作成
+  $sql = 'INSERT INTO users_table (id,username,email,password,is_admin,is_deleted,created_at,updated_at) VALUES(NULL,:username,:email,:password,0,0,now(),now())';
+  //SQl準備
+  $stmt = $pdo->prepare($sql);
+  //バインド変数
+  $stmt->bindValue(':username', $username, PDO::PARAM_STR);
+  $stmt->bindValue(':email', $email, PDO::PARAM_STR);
+  $stmt->bindValue(':password', $password, PDO::PARAM_STR);
+  //SQL実行
+  try {
+    $status = $stmt->execute();
+  } catch (PDOException $e) {
+    echo json_encode(["sql error" => "{$e->getMessage()}"]);
+    exit();
+  }
+  // var_dump($status);
+  // exit();
+  $message = "<p>ユーザー登録完了しました.</p>";
+  $link = "<a href=../login/login_form.php>ログインページ</a>";
 }
-echo 'ユーザー登録完了しました.';
-echo '<br>';
-echo '<a href="login_form.php">ログインページ</a>';
-exit();
+
+// echo 'ユーザー登録完了しました.';
+// echo '<br>';
+// echo '<a href="login_form.php">ログインページ</a>';
+// exit();
+
+?>
+
+
+<!DOCTYPE html>
+<html lang="ja">
+
+<head>
+  <meta charset="UTF-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Document</title>
+  <link rel="stylesheet" href="../css/reset.css">
+  <link rel="stylesheet" href="../css/miyuki.css">
+</head>
+
+<body>
+  <div class="container">
+    <?= $message ?>
+    <?= $link ?>
+  </div>
+</body>
+
+</html>

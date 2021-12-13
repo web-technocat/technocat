@@ -1,4 +1,14 @@
 <!-- 新規登録ページ -->
+<?php
+// var_dump($_SESSION);
+session_start();
+//エラー表示の変数を定義
+$err = $_SESSION;
+//sessionの中身(エラーメッセージ)を消す（リロードすると消える処理）
+$_SESSION = array();
+session_destroy();
+
+?>
 <!DOCTYPE html>
 <html>
 
@@ -20,16 +30,28 @@
         <div class="control">
           <label for="username">ユーザー名</label>
           <input id="username" type="text" name="username">
+          <!-- login.php PHP文で定義した変数内にエラーがあれば表示 -->
+          <?php if (isset($err)) : ?>
+            <p><?= $err['username']; ?></p>
+          <?php endif; ?>
         </div>
 
         <div class="control">
           <label for="email">メールアドレス<span class="required">必須</span></label>
           <input id="email" type="email" name="email">
+          <!-- login.php PHP文で定義した変数内にエラーがあれば表示 -->
+          <?php if (isset($err)) : ?>
+            <p><?= $err['email']; ?></p>
+          <?php endif; ?>
         </div>
 
         <div class="control">
           <label for="password">パスワード<span class="required">必須</span></label>
           <input id="password" type="password" name="password">
+          <!-- login.php PHP文で定義した変数内にエラーがあれば表示 -->
+          <?php if (isset($err)) : ?>
+            <p><?= $err['password']; ?></p>
+          <?php endif; ?>
         </div>
 
         <div class="control">

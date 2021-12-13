@@ -3,7 +3,7 @@
 //セッション開始
 session_start();
 //関数読み込み
-include('./functions.php');
+include('../functions.php');
 //セッション状態確認
 check_session_id();
 
