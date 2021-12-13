@@ -2,7 +2,7 @@
 //セッション開始
 session_start();
 //関数読み込み
-include("functions.php");
+include("../functions.php");
 //セッション状態の確認
 check_session_id();
 //取得したIDを定義

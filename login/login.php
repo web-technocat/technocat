@@ -6,7 +6,7 @@
 //セッション開始
 session_start();
 //関数読み込み
-include('functions.php');
+include('../functions.php');
 
 //-----バリデーション-----//
 //エラーメッセージ
@@ -34,7 +34,7 @@ if (count($err) > 0) {
   //エラーがあった場合
   //セッションにエラーメッセージを入れて、ログイン画面に戻す
   $_SESSION = $err;
-  header('Location:login_form.php');
+  header('Location:../login/login_form.php');
   return; //処理を止める
 };
 
@@ -68,11 +68,12 @@ if (count($err) === 0) {
     $_SESSION['username'] = $val['username'];
     //管理者であれば、管理者専用画面に遷移
     if ($_SESSION['is_admin'] === '1') {
-      header('Location:user_list.php');
+      header('Location:../User/user_list.php');
       exit();
     } else {
       //ユーザーであれば、マイページへ遷移
-      header("Location:room_list.php");
+      header("Location:../Profile/profile_input.php");
+      // header("Location:../room_list.php");
       exit();
     }
   }else{
