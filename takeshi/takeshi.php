@@ -11,9 +11,6 @@ include('takeshi_functions.php');
 check_session_id();
 
 
-// var_dump($_SESSION);
-// exit();
-
 //<?=htmlspecialchars($hoge, ENT_QUOTES);
 
 ?>

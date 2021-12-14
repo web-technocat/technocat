@@ -70,6 +70,7 @@ li {
   align-items: center;
 }
 
+/* ホームボタン */
 .la-home {
   font-size: 56px;
 }
@@ -171,10 +172,12 @@ header {
 /* ----room_list.phpのスタイル-------------------------------------- */
 
 /* ----検索部分 ----------*/
+
 #main_top {
   display: flex;
   justify-content: space-around;
   align-items: center;
+  margin-bottom: 24px;
 }
 
 /* 検索欄 */
@@ -202,5 +205,76 @@ header {
   margin-top: 48px;
 }
 
+/* ルーム名 */
+.now_room {
+  display: flex;
+  justify-content: flex-start;
+  align-items: center;
+}
+
+/* -----room_inputのスタイル ---------------------------------------*/
+
+/* ルーム名入力欄 */
+#create_room {
+  width: 250px;
+  height: 36px;
+  font-size: 16px;
+}
+
+/* ルームタイプ検索部分 */
+#select_type {
+  margin-top: 32px;
+  font-size: 24px;
+}
+
+/* ルーム作成ボタン */
+#room_create_btn {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  font-size: 18px;
+  border: 1px solid #454545;
+  border-radius: 10px;
+  height: 48px;
+  width: 120px;
+  margin: 48px auto;
+}
+
 /* ----member_list.phpのスタイル------------------------------------ */
+
+/* ホストユーザー表示部分 */
+#host_view {
+  margin-top: 24px;
+}
+
+/* ホストユーザー情報 */
+#host_user {
+  display: flex;
+  justify-content: flex-start;
+  align-items: center;
+}
+
+.checkin_member{
+  display: flex;
+  justify-content: flex-start;
+  align-items: center;
+}
+
+/* 参加メンバー一覧部分 */
+#join_member {
+  margin-top: 32px;
+}
+
+/* 入室ボタン */
+#join_btn {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  font-size: 18px;
+  border: 1px solid #454545;
+  border-radius: 10px;
+  height: 48px;
+  width: 120px;
+  margin: 24px auto;
+}
 

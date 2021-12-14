@@ -43,10 +43,8 @@ $imgUrl = $login_user['image'];
 
 //-----------------トークルーム情報取得----------------------------------------------//
 
-//SQL処理 users_table(x)とroom_table(y)を結合して取得
-$sql = 'SELECT x.id,room_name,room_type,host_user,username
-FROM  room_table as x LEFT JOIN users_table as y 
-ON x.host_user = y.id WHERE x.id = :room_id';
+//SQL処理 users_table(x)とroom_table(y)をprofile_table(z)結合して取得
+$sql = 'SELECT x.id,room_name,room_type,host_user,username,image FROM room_table as x LEFT JOIN users_table as y ON x.host_user = y.id LEFT JOIN profile_table as z ON y.id = z.user_id WHERE x.id = :room_id';
 
 $stmt = $pdo->prepare($sql);
 $stmt->bindValue(':room_id', $room_id, PDO::PARAM_STR);
@@ -63,10 +61,8 @@ $result = $stmt->fetch(PDO::FETCH_ASSOC);
 
 //-----------------チェックイン情報取得----------------------------------------------//
 
-//SQL処理 checkin_table(x)とusers_table(y)を結合して取得
-$sql = 'SELECT x.room_id,y.username
-FROM checkin_table as x LEFT JOIN users_table as y 
-ON x.user_id = y.id where x.room_id = :room_id';
+//SQL処理 room_table(x)とusers_table(y)とprofile_table(z)を結合して取得
+$sql = 'SELECT x.room_id,username,image FROM checkin_table as x LEFT JOIN users_table as y ON x.user_id = y.id LEFT JOIN profile_table as z ON y.id = z.user_id where x.room_id = :room_id';
 
 $stmt = $pdo->prepare($sql);
 $stmt->bindValue(':room_id', $room_id, PDO::PARAM_STR);
@@ -83,13 +79,18 @@ $members = $stmt->fetchAll(PDO::FETCH_ASSOC);
 
 // タグをつけて表示
 foreach ($members as $member) {
+  //エスケープ処理
+  $room_id = htmlspecialchars($member['room_id'], ENT_QUOTES);
+  $username = htmlspecialchars($member['username'], ENT_QUOTES);
+  $image = htmlspecialchars($member['image'], ENT_QUOTES);
+
   $member_list .= "
-    <li><img src =../img/null.png class=profile_img>{$member['username']}</li>
+    <li class=checkin_member><img src ={$image} class=profile_img>{$username}</li>
   ";
 }
 
 //タイトル表示のための変数
-$title = "room infomation";
+$title = "infomation";
 //ユーザー名表示のための変数
 $username = $_SESSION['username'];
 
@@ -125,13 +126,21 @@ $username = $_SESSION['username'];
       <!-- ルーム詳細表示部分 -->
       <section id="room_infometion">
         <h1><?= htmlspecialchars($result['room_name'], ENT_QUOTES); ?></h1>
-        <h2>host:<?= htmlspecialchars($result['username'], ENT_QUOTES); ?></h2>
+
+        <div id="host_view">
+          <p>ホストユーザー</p>
+          <div id="host_user">
+            <img src=<?= htmlspecialchars($result['image'], ENT_QUOTES); ?> class="profile_img" alt="プロフィール画像">
+            <p><?= htmlspecialchars($result['username'], ENT_QUOTES); ?></p>
+          </div>
+        </div>
       </section>
 
       <!-- ルームメンバー表示部分 -->
       <section id="join_member">
+        <p>参加中のメンバー</p>
         <ul>
-          <?= $member_list ?>
+          <?= $member_list ?> <!-- php側でエスケープ処理済-->
         </ul>
       </section>
 
@@ -157,6 +166,37 @@ $username = $_SESSION['username'];
 
   <!-- takeshi.js読み込み -->
   <script src="./js/takeshi.js"></script>
+
+  <script>
+
+    //スワイプしてリロードする関数
+    function setSwipe(swiped_content) {
+      var s_Y; // スワイプ開始位置の定義
+      var e_Y; // スワイプ終了位置の定義
+      var dist = 30; // スワイプしたと判断するpx数を定義
+      // スワイプ開始位置を決める（指が画面に触れた時）
+      $(`${swiped_content}`).on('touchstart', function(e) {
+        e.preventDefault();
+        s_Y = e.touches[0].pageY;
+      });
+      // スワイプ終了位置を決める（指が画面上を動いてる時）
+      $(`${swiped_content}`).on('touchmove', function(e) {
+        e.preventDefault();
+        e_Y = e.changedTouches[0].pageY;
+      });
+      // 指が画面から離れた時
+      $(`${swiped_content}`).on('touchend', function(e) {
+        if (s_Y + dist < e_Y) {
+          // 下にスワイプした時の処理
+          location.reload();
+        }
+      });
+    }
+
+    //関数実行(body);
+    setSwipe('body');
+
+  </script>
 
 </body>
 

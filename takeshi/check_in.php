@@ -32,7 +32,7 @@ try {
 //セッションにルームIDを渡す
 $_SESSION['room_id'] = $room_id;
 
-//処理が終わった後はチャットぺーじへ移動
+//処理が終わった後はチャットページへ移動
 header("Location:takeshi.php");
 exit();
 

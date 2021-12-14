@@ -14,7 +14,7 @@ check_room_session_id();
 $imgUrl = getLouginUser();
 
 //タイトル表示のための変数
-$title = "create room";
+$title = "トークルーム作成";
 //ユーザー名表示のための変数
 $username = $_SESSION['username'];
 
@@ -51,18 +51,18 @@ $username = $_SESSION['username'];
 
         <!-- ルームネームを入力 -->
         <div>
-          <p>Room Name</p>
-          <input type="text" name="room_name">
+          <p>トークルーム名</p>
+          <input type="text" name="room_name" id="create_room">
         </div>
 
         <!-- 部屋のタイプを選択 -->
-        <div>
-          <input type="radio" name="room_type" value="0">ペア
-          <input type="radio" name="room_type" value="1">グループ
+        <div id="select_type">
+          <input type="radio" name="room_type" value="0">グループ
+          <input type="radio" name="room_type" value="1">ペア
         </div>
 
         <!-- 作成ボタン -->
-        <button type="submit">作成</button>
+        <button type="submit" id="room_create_btn">作成</button>
 
       </form>
     </div>

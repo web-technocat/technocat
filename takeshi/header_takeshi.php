@@ -9,7 +9,7 @@
 
   <div id="menu_list">
     <ul>
-      <a href="../Profile/profile_input.php">
+      <a href="../Profile/profile_edit.php">
         <li>プロフィール編集</li>
       </a>
       <li>hoge</li>
