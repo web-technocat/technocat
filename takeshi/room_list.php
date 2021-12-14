@@ -4,18 +4,43 @@
 //セッションの開始
 session_start();
 //関数ファイル読み込み
-include('functions.php');
+include('takeshi_functions.php');
 //セッション状態の確認とセッションID再生成
 check_session_id();
-
+//セッションにroom_idがあればチャットルームへ
+check_room_session_id();
+//ユーザーIDを取得
+$user_id = $_SESSION['user_id'];
 
 // DB接続
 $pdo = connect_to_db();
 
-//SQL処理 room_table(x)とusers_table(y)を結合して取得
-$sql = 'SELECT x.id,room_name,room_type,host_user,username
-FROM  room_table as x LEFT JOIN users_table as y 
-ON x.host_user = y.id ORDER BY x.created_at DESC';
+//-----------------ログインユーザー情報取得-------------------------------------------//
+
+//users_tableとprofile_tableを結合して現在ログインしているユーザーの情報を取得
+$sql = 'SELECT users_table.id,username,image 
+FROM users_table LEFT JOIN profile_table 
+ON users_table.id = profile_table.user_id 
+WHERE users_table.id = :user_id';
+
+$stmt = $pdo->prepare($sql);
+$stmt->bindValue(':user_id', $user_id, PDO::PARAM_INT);
+
+try {
+  $status = $stmt->execute();
+} catch (PDOException $e) {
+  echo json_encode(["sql error" => "{$e->getMessage()}"]);
+  exit();
+}
+//$login_userに結果を受け取る
+$login_user = $stmt->fetch(PDO::FETCH_ASSOC);
+//imageのURLのパスを代入
+$imgUrl = $login_user['image'];
+
+//--------現在作成されているトークルーム情報取得----------------------------------------//
+
+//SQL処理 room_table(x)とusers_table(y)とprofile_table(z)を結合して取得
+$sql = 'SELECT x.id,room_name,room_type,host_user,username,image FROM room_table as x LEFT JOIN users_table as y ON x.host_user = y.id LEFT JOIN profile_table as z ON y.id = z.user_id ORDER BY x.created_at DESC';
 
 $stmt = $pdo->prepare($sql);
 
@@ -25,6 +50,7 @@ try {
   echo json_encode(["sql error" => "{$e->getMessage()}"]);
   exit();
 }
+
 //$resultに結果を受け取る
 $result = $stmt->fetchAll(PDO::FETCH_ASSOC);
 
@@ -32,11 +58,19 @@ $result = $stmt->fetchAll(PDO::FETCH_ASSOC);
 //取得したデータにHTMLタグをつける
 $output = "";
 foreach ($result as $record) {
+  $id = htmlspecialchars($record['id'],ENT_QUOTES);
+  $room_name = htmlspecialchars($record['room_name'],ENT_QUOTES);
+  $room_type = htmlspecialchars($record['room_type'],ENT_QUOTES);
+  $host_user = htmlspecialchars($record['host_user'],ENT_QUOTES);
+  $username = htmlspecialchars($record['username'],ENT_QUOTES);
+  $image = htmlspecialchars($record['image'],ENT_QUOTES);
+  
   $output .= "
-    <a href=member_list.php?id={$record["id"]}>
-    <li><img src=./img/null.png class=profile_img>{$record["room_name"]}</li>
+    <a href=member_list.php?id={$id}>
+    <li><img src={$image} class=profile_img>{$room_name}</li>
     </a>
   ";
+
 }
 
 //タイトル表示のための変数
@@ -56,7 +90,7 @@ $username = $_SESSION['username'];
   <title>room list</title>
 
   <!-- reset.css読み込み -->
-  <link rel="stylesheet" href="./css/reset.css">
+  <link rel="stylesheet" href="../css/reset.css">
   <!-- takeshi.css読み込み -->
   <link rel="stylesheet" href="./css/takeshi.css">
   <!-- line-awesome読み込み -->
@@ -69,7 +103,7 @@ $username = $_SESSION['username'];
   <div id="wrapper_y">
 
     <!-- ヘッダーの読み込み -->
-    <?php include('./takeshi/header_takeshi.php'); ?>
+    <?php include('header_takeshi.php'); ?>
 
     <!-- メイン部分 -->
     <div class="main_contents">
@@ -102,7 +136,7 @@ $username = $_SESSION['username'];
     <!-- メイン部分ここまで -->
 
     <!-- フッターの読み込み -->
-    <?php include('./takeshi/footer_takeshi.php'); ?>
+    <?php include('footer_takeshi.php'); ?>
 
   </div>
   <!--wrapperここまで -->
@@ -142,7 +176,6 @@ $username = $_SESSION['username'];
         .finally(function() {
           // 省略
         });
-
 
     });
   </script>

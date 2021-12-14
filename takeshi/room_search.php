@@ -2,7 +2,7 @@
 //---------検索用phpです--------------------------------------------//
 
 //関数読み込み
-include("functions.php");
+include("takeshi_functions.php");
 //入力ワードを受け取る
 $search_word = $_GET["searchword"]; 
 

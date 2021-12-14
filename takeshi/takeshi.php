@@ -6,7 +6,7 @@
 //セッションの開始
 session_start();
 //関数ファイル読み込み
-include('functions.php');
+include('takeshi_functions.php');
 //セッション状態の確認とセッションID再生成
 check_session_id();
 

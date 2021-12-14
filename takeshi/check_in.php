@@ -4,7 +4,7 @@
 //セッションの開始
 session_start();
 //関数ファイル読み込み
-include('functions.php');
+include('takeshi_functions.php');
 //セッション状態の確認とセッションID再生成
 check_session_id();
 
@@ -32,7 +32,7 @@ try {
 //セッションにルームIDを渡す
 $_SESSION['room_id'] = $room_id;
 
-//処理が終わった後はトークルーム内へ移動
+//処理が終わった後はチャットぺーじへ移動
 header("Location:takeshi.php");
 exit();
 

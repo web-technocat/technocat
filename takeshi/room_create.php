@@ -4,7 +4,7 @@
 //セッションの開始
 session_start();
 //関数ファイル読み込み
-include('functions.php');
+include('takeshi_functions.php');
 //セッション状態の確認とセッションID再生成
 check_session_id();
 
@@ -44,7 +44,7 @@ try {
   exit();
 }
 
-
+//checkin_tableからroom_idを取得
 $sql = 'SELECT room_id FROM checkin_table WHERE user_id = :user_id';
 $stmt = $pdo->prepare($sql);
 $stmt->bindValue(':user_id', $user_id, PDO::PARAM_STR);
@@ -61,7 +61,7 @@ $result = $stmt->fetch(PDO::FETCH_ASSOC);
 //セッションにroom_idを渡す
 $_SESSION['room_id'] = $result;
 
-//処理が終わった後のページ移動
+//処理が終わったらチャットページに移動
 header("Location:takeshi.php");
 exit();
 
