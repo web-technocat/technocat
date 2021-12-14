@@ -4,9 +4,14 @@
 //セッションの開始
 session_start();
 //関数ファイル読み込み
-include('functions.php');
+include('takeshi_functions.php');
 //セッション状態の確認とセッションID再生成
 check_session_id();
+//セッションにroom_idがあればチャットルームへ
+check_room_session_id();
+
+//関数実行
+$imgUrl = getLouginUser();
 
 //タイトル表示のための変数
 $title = "create room";
@@ -26,7 +31,7 @@ $username = $_SESSION['username'];
   <title>room input</title>
 
   <!-- reset.css読み込み -->
-  <link rel="stylesheet" href="./css/reset.css">
+  <link rel="stylesheet" href="../css/reset.css">
   <!-- takeshi.css読み込み -->
   <link rel="stylesheet" href="./css/takeshi.css">
   <!-- line-awesome読み込み -->
@@ -36,14 +41,11 @@ $username = $_SESSION['username'];
 <body>
   <div id="wrapper_y">
 
-    <?php
-    //ヘッダーの読み込み
-    include('./takeshi/header_takeshi.php');
-    ?>
-
+    <!-- ヘッダーの読み込み -->
+    <?php include('header_takeshi.php'); ?>
 
     <div class="main_contents">
-      
+
       <!-- 入力フォーム -->
       <form action="room_create.php" method="post">
 
@@ -66,10 +68,8 @@ $username = $_SESSION['username'];
     </div>
     <!--main_contentsここまで -->
 
-    <?php
-    //フッターの読み込み
-    include('./takeshi/footer_takeshi.php');
-    ?>
+    <!-- フッターの読み込み -->
+    <?php include('footer_takeshi.php'); ?>
 
   </div>
   <!--wrapperここまで -->

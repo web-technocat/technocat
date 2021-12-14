@@ -4,7 +4,7 @@
 //セッションの開始
 session_start();
 //関数ファイル読み込み
-include('functions.php');
+include('takeshi_functions.php');
 //セッション状態の確認とセッションID再生成
 check_session_id();
 
@@ -63,7 +63,7 @@ if (!$stmt->fetchColumn() > 0) {
 
 }
 
-//セッションを削除
+//セッションのroom_idを削除
 unset($_SESSION['room_id']);
 
 //処理が終わったらroom_list.php(トークルーム一覧)へ移動

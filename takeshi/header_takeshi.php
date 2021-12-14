@@ -1,20 +1,24 @@
+<!------- ヘッダー部分のphp --------------------------------------------->
+
 <!-- ハンバーガーメニューの内容 -->
 <div id="menu_contents">
   <div id="my_acount">
-    <img src="./img/null.png" class="profile_img">
+    <img src=<?= htmlspecialchars($imgUrl, ENT_QUOTES) ?> class="profile_img">
     <div><?= htmlspecialchars($username, ENT_QUOTES) ?></div>
   </div>
 
   <div id="menu_list">
     <ul>
-      <li>プロフィール編集</li>
+      <a href="../Profile/profile_input.php">
+        <li>プロフィール編集</li>
+      </a>
       <li>hoge</li>
       <li>hoge</li>
       <li>hoge</li>
     </ul>
     <!-- ログアウトボタン -->
     <div id="logout_btn">
-      <a href="todo_logout.php">
+      <a href="../login/logout.php">
         <div>logout</div>
       </a>
     </div>
@@ -39,7 +43,7 @@
   <!-- ヘッダー右側 -->
   <div id="header_right">
     <!-- プロフィール画像表示部分 -->
-    <img src="./img/null.png" class="profile_img" id="my_img">
+    <img src=<?= htmlspecialchars($imgUrl, ENT_QUOTES) ?> class="profile_img" id="my_img">
     <!-- ハンバーガーメニューボタン -->
     <div class="las la-bars" id="hamburger"></div>
   </div>
