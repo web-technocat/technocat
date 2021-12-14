@@ -232,16 +232,6 @@ foreach ($result as $record) {
             $('#output')[0].scrollIntoView(false);
         });
 
-        // setInterval(function(){
-        //     axios({
-        //         method: 'get',
-        //         url: 'stream.php',
-        //     })
-        //     .then(function(response) {
-        //         console.log(response);
-        //     });
-        // }, 1000);
-
 
         $('#text-form').on('change', function() {
             if ($('#text-form').val() !== '') {
