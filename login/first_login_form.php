@@ -25,10 +25,9 @@ session_destroy();
 
 <body>
   <div class="container">
-
     <div class="form-wrapper">
       <h1>Sign In</h1>
-      <form action="./login.php" method="POST">
+      <form action="./first_login.php" method="POST">
 
         <div class="form-item">
           <label for="email"></label>

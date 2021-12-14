@@ -50,39 +50,42 @@ $record = $stmt->fetch(PDO::FETCH_ASSOC);
   <title>ユーザーリスト（編集画面）</title>
   <link rel="stylesheet" href="../css/reset.css">
   <link rel="stylesheet" href="../css/miyuki.css">
+  <link rel="stylesheet" href="../css/login.css">
 </head>
 
 <body>
   <div class="container">
-    <div class="content">
+
+    <div class="form-wrapper">
+      <h1>Account Edit</h1>
       <form action="./user_update.php" method="POST">
-        <h1>アカウント情報</h1>
-        <br>
 
-        <div class="control">
-          <label for="username">ユーザー名</label>
-          <input id="username" type="text" name="username" value="<?= $record['username'] ?>">
+        <div class="form-item">
+          <label for="username">UserName</label>
+          <input type="text" name="username" required="required" placeholder="User Name" value="<?= $record['username'] ?>"></input>
         </div>
 
-        <div class="control">
-          <label for="email">メールアドレス<span class="required">必須</span></label>
-          <input id="email" type="email" name="email" value="<?= $record['email'] ?>">
+        <div class="form-item">
+          <label for="email">Email</label>
+          <input type="email" name="email" required="required" placeholder="Email Address" value="<?= $record['email'] ?>"></input>
         </div>
 
-        <div class="control">
-          <label for="password">パスワード<span class="required">必須</span></label>
-          <input id="password" type="password" name="password" value="<?= $record['password'] ?>">
+        <div class="form-item">
+          <label for="password">Password</label>
+          <input type="password" name="password" required="required" placeholder="Password" value="<?= $record['password'] ?>"></input>
         </div>
 
-        <div class="control">
-          <button type="submit" class="btn">更新</button>
+        <div class="button-panel">
+          <input type="submit" class="button" title="Edit Account" value="Edit"></input>
         </div>
+
         <!-- 次の更新処理でidが必要になるため，<input type="hidden">を用いてidを送信する． -->
         <input type="hidden" name="id" value="<?= $record['id'] ?>">
       </form>
-      <div>
-        <a href="./user_list.php">一覧画面</a>
+      <div class="form-footer">
+        <p><a href="./user_list.php">List Display</a></p>
       </div>
+
     </div>
   </div>
 </body>
