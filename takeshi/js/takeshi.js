@@ -18,3 +18,4 @@ $('#mask').on('click', function () {
   $('#mask').hide(); //メニュー背景隠す
   $('#menu_contents').hide(); //メニュー中身隠す
 });
+

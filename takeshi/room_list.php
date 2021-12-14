@@ -40,7 +40,7 @@ $imgUrl = $login_user['image'];
 //--------現在作成されているトークルーム情報取得----------------------------------------//
 
 //SQL処理 room_table(x)とusers_table(y)とprofile_table(z)を結合して取得
-$sql = 'SELECT x.id,room_name,room_type,host_user,username,image FROM room_table as x LEFT JOIN users_table as y ON x.host_user = y.id LEFT JOIN profile_table as z ON y.id = z.user_id ORDER BY x.created_at DESC';
+$sql = 'SELECT x.id,room_name,room_type,host_user,username,image FROM room_table as x LEFT JOIN users_table as y ON x.host_user = y.id LEFT JOIN profile_table as z ON y.id = z.user_id WHERE room_type = 0 ORDER BY x.created_at DESC';
 
 $stmt = $pdo->prepare($sql);
 
@@ -58,19 +58,20 @@ $result = $stmt->fetchAll(PDO::FETCH_ASSOC);
 //取得したデータにHTMLタグをつける
 $output = "";
 foreach ($result as $record) {
-  $id = htmlspecialchars($record['id'],ENT_QUOTES);
-  $room_name = htmlspecialchars($record['room_name'],ENT_QUOTES);
-  $room_type = htmlspecialchars($record['room_type'],ENT_QUOTES);
-  $host_user = htmlspecialchars($record['host_user'],ENT_QUOTES);
-  $username = htmlspecialchars($record['username'],ENT_QUOTES);
-  $image = htmlspecialchars($record['image'],ENT_QUOTES);
-  
+
+  //エスケープ処理
+  $id = htmlspecialchars($record['id'], ENT_QUOTES);
+  $room_name = htmlspecialchars($record['room_name'], ENT_QUOTES);
+  $room_type = htmlspecialchars($record['room_type'], ENT_QUOTES);
+  $host_user = htmlspecialchars($record['host_user'], ENT_QUOTES);
+  $username = htmlspecialchars($record['username'], ENT_QUOTES);
+  $image = htmlspecialchars($record['image'], ENT_QUOTES);
+
   $output .= "
     <a href=member_list.php?id={$id}>
-    <li><img src={$image} class=profile_img>{$room_name}</li>
+    <li class=now_room><img src={$image} class=profile_img>{$room_name}</li>
     </a>
   ";
-
 }
 
 //タイトル表示のための変数
@@ -95,6 +96,9 @@ $username = $_SESSION['username'];
   <link rel="stylesheet" href="./css/takeshi.css">
   <!-- line-awesome読み込み -->
   <link rel="stylesheet" href="https://maxst.icons8.com/vue-static/landings/line-awesome/line-awesome/1.3.0/css/line-awesome.min.css">
+
+  <!-- bootstrap css -->
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.0-beta1/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-giJF6kkoqNQ00vy+HMDP7azOuL0xtbfIcaT9wjKHr8RbDVddVHyTfAAsrekwKmP1" crossorigin="anonymous">
 
 </head>
 
@@ -124,10 +128,21 @@ $username = $_SESSION['username'];
 
       </div>
 
+      <!-- ルームタイプ切り替えボタン -->
+      <secton id="typeselect_section">
+        <input type="radio" class="btn-check" name="sel_type" id="success-outlined" autocomplete="off">
+        <label class="btn btn-outline-secondary btn-lg" for="success-outlined">group</label>
+
+        <input type="radio" class="btn-check " name="sel_type" id="danger-outlined" autocomplete="off">
+        <label class="btn btn-outline-secondary btn-lg" for="danger-outlined">pear</label>
+      </secton>
+
+
       <!-- トークルーム一覧出力部分 -->
       <section id="room_section">
         <ul id="result">
           <?= $output ?>
+          <!-- php側でエスケープ処理済-->
           <ul>
       </section>
 
@@ -143,6 +158,10 @@ $username = $_SESSION['username'];
 
   <!-- jquery読み込み -->
   <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
+
+  <!-- bootstrap js -->
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.0-beta1/dist/js/bootstrap.bundle.min.js" integrity="sha384-ygbV9kiqUc6oa4msXn9868pTtWMgiQaeYH7/t7LECLbyPA2x65Kgf80OJFdroafW" crossorigin="anonymous"></script>
+
   <!-- axios読み込み -->
   <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
   <!-- takeshi.js読み込み -->
@@ -151,25 +170,98 @@ $username = $_SESSION['username'];
   <script>
     //--------検索部分--------------------------------------//
 
+    //スワイプしてリロードする関数
+    function setSwipe(swiped_content) {
+      var s_Y; // スワイプ開始位置の定義
+      var e_Y; // スワイプ終了位置の定義
+      var dist = 30; // スワイプしたと判断するpx数を定義
+      // スワイプ開始位置を決める（指が画面に触れた時）
+      $(`${swiped_content}`).on('touchstart', function(e) {
+        e.preventDefault();
+        s_Y = e.touches[0].pageY;
+      });
+      // スワイプ終了位置を決める（指が画面上を動いてる時）
+      $(`${swiped_content}`).on('touchmove', function(e) {
+        e.preventDefault();
+        e_Y = e.changedTouches[0].pageY;
+      });
+      // 指が画面から離れた時
+      $(`${swiped_content}`).on('touchend', function(e) {
+        if (s_Y + dist < e_Y) {
+          // 下にスワイプした時の処理
+          location.reload();
+        }
+      });
+    }
+
+    //関数実行(body);
+    setSwipe('body');
+
+    //グループ分けの記述(group)
+    // $('#success-outlined').on('change', function() {
+    //   console.log('group');
+    //   const searchNumber = 0;
+    //   const requestUrl = "type_search.php";
+
+    //   axios
+    //     .get(`${requestUrl}?searchword=${searchNumber}`)
+    //     .then(function(response) {
+    //       console.log(response);
+    //     })
+    //     .catch(function(error) {
+    //       // 省略
+    //     })
+    //     .finally(function() {
+    //       // 省略
+    //     });
+
+
+    // })
+
+    //グループ分けの記述(pear)
+    // $('#danger-outlined').on('change', function() {
+    //   console.log('pear');
+    //   const searchNumber = 1;
+    //   const requestUrl = "type_search.php";
+
+    //   axios
+    //     .get(`${requestUrl}?searchword=${searchNumber}`)
+    //     .then(function(response) {
+    //       console.log(response);
+    //     })
+    //     .catch(function(error) {
+    //       // 省略
+    //     })
+    //     .finally(function() {
+    //       // 省略
+    //     });
+
+
+    // })
+
+
     //検索ワード入力欄のキーを上げたら発動
     $('#search').on('keyup', function(e) {
-      console.log(e.target.value); //入力文字をコンソールに出す
-      const searchWord = e.target.value; //入力された値
-      const requestUrl = "room_search.php"; //送信先ファイル
+        console.log(e.target.value); //入力文字をコンソールに出す
+        const searchWord = e.target.value; //入力された値
+        const requestUrl = "room_search.php"; //送信先ファイル
 
       axios
         .get(`${requestUrl}?searchword=${searchWord}`)
         .then(function(response) { //responseにデータ受け取り
-          //console.log(response);
+          console.log(response.data);
           //表示のための配列
           const array = [];
 
-          //response.dateに繰り返し処理でタグをつける
-          response.data.forEach(function(x) {
-            array.push(`<a href=member_list.php?id=${x.id}><li>${x.room_name} type:${x.room_type} host:${x.username}</li></a>`);
+        //response.dateに繰り返し処理でタグをつける
+        response.data.forEach(function(x) {
+          array.push(`
+          <a href=member_list.php?id=${x.id}>
+          <li class =now_room><img src=${x.image} class = profile_img>${x.room_name}</li>
+          </a>`);
           });
-          $('#result').html(array); //id=resultのhtmlを上書き
-        })
+            $('#result').html(array); //id=resultのhtmlを上書き
+          })
         .catch(function(error) {
           console.log(error); //失敗したらコンソールにエラーを出す
         })
@@ -177,7 +269,8 @@ $username = $_SESSION['username'];
           // 省略
         });
 
-    });
+      });
+
   </script>
 
 </body>

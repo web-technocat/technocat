@@ -41,19 +41,14 @@ try {
   exit();
 }
 
-// var_dump($room_id);
-// exit();
-
-//詰みポイント！！！！！！！！！！！！！
 
 //room_idが一致するレコード数（入室者数）が0以上でなければ、room_tableから削除
 if (!$stmt->fetchColumn() > 0) {
-  // var_dump($room_id);
-  // exit();
-
-  $sql = "DELETE FROM room_table WHERE id = '" . $room_id . "'";
+  
+  $sql = "DELETE FROM room_table WHERE id = :room_id";
   $stmt = $pdo->prepare($sql);
-  //$stmt->bindValue(':room_id', $room_id, PDO::PARAM_INT);
+  $stmt->bindValue(':room_id', $room_id, PDO::PARAM_INT);
+  
   try {
     $status = $stmt->execute();
   } catch (PDOException $e) {
