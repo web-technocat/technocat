@@ -6,8 +6,11 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Chat</title>
     <link href="https://use.fontawesome.com/releases/v5.6.1/css/all.css" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/lightbox2/2.7.1/css/lightbox.css" rel="stylesheet">
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.1.1/jquery.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/lightbox2/2.7.1/js/lightbox.min.js" type="text/javascript"></script>
 <style type="text/css">
-    body {
+        body {
             padding: 0;
             margin: 0 auto;
             width: 375px;
@@ -63,6 +66,7 @@
             border: 2px solid #333333;
             border-radius: 16px;
             max-width: 50%;
+            word-break: break-all;
         }
 
         .log p {
@@ -102,31 +106,66 @@
             background: white;
         }
 
-        .chat-input > div {
+        .chat-container {
             display: flex;
-            justify-content: center;
             align-items: center;
+            justify-content: center;
             padding: 8px 0;
         }
 
+
+
         .chat-input > div > textarea {
-            width: calc(80% + 16px);
+            width: calc(64% + 32px);
             height: 48px;
             font-size: 20px;
+            margin-left: 16px;
             resize: none;
+            border: 2px solid #333;
+        }
+        .chat-input > div > textarea.active {
+            width: 48%;
         }
 
-        .chat-input > div > button {
+        label {
+            width: 68px;
+            height: 48px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+
+        #upfile {
+            width: 100%;
+            height: 100%;
+            padding: 2px;
+            font-size: 20px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            border: 2px solid #333;
+            cursor: pointer;
+        }
+
+        #input-file {
             display: none;
-            width: 16%;
+        }
+
+        #send {
+            display: none;
+            width: 68px;
             height: 48px;
             padding: 2px;
             font-size: 20px;
             margin-left: 16px;
+            justify-content: center;
+            align-items: center;
+            border: 2px solid #333;
+            cursor: pointer;
         }
 
-        .chat-input > div > button.active {
-            display: block;
+        #send.active {
+            display: flex;
         }
         /* フッター全体 */
         .footer_y {
@@ -149,67 +188,9 @@
             height: 64px;
             width: 25%;
         }
-/* .container {
-    width: 100%;
-    height: 100%;
-    box-sizing: border-box;
-}
-.msg-log {
-    width: 100%;
-    height: 92%;
-    vertical-align:top;
-    box-sizing: border-box;
-    padding: 0px;
-    border: black solid 1px;
-    overflow-y: scroll;
-}
-.input-area {
-    width: 100%;
-    box-sizing: border-box;
-}
-.msg {
-    width: 90%;
-    height: 8%;
-    vertical-align:top;
-    box-sizing: border-box;
-    padding: 0px;
-    float: left;
-}
-.btn {
-    width: 10%;
-    height: 8%;
-    vertical-align:top;
-    box-sizing: border-box;
-    padding: 0px;
-}
-.receive-msg-left {
-    border-radius: 10px;
-    border: black solid 1px;
-    padding: 10px;
-    margin: 10px;
-    display: inline-block;
-}
-.receive-msg-right {
-    border-radius: 10px;
-    border: black solid 1px;
-    padding: 10px;
-    margin: 10px;
-    display: inline-block;
-    background-color: #00FF00;
-}
-.br {
-    clear: both;
-} */
 </style>
 </head>
 <body>
-    <!-- <div class="container">
-        <div id="msg_log" class="msg-log"></div>
-        <div class="input-area">
-            <textarea id="msg" class="msg"></textarea>
-            <button class="btn" onclick="send();" >送信</button>
-        </div>
-    </div> -->
     <header>
         <div>
             <a href="room_list.php">
@@ -223,12 +204,17 @@
     </header>
     <main>
         <div id="output">
-            <?=$output?>
         </div>
         <div class="chat-input">
-            <div>
+            <div class="chat-container">
+                <label for="input-file">
+                    <div id="upfile">
+                        <i class="fas fa-file-upload"></i>
+                    </div>
+                    <input type="file" name="upload-file" id="input-file"></input>
+                </label>
                 <textarea id="text-form"></textarea>
-                <button id="send" onclick="send();"><i class="fas fa-paper-plane"></i></button>
+                <div id="send" onclick="send();"><i class="fas fa-paper-plane"></i></div>
             </div>
         </div>
     </main>
@@ -266,28 +252,94 @@
                             result_time_diff = `${date_diff}日前に`;
                         }
                         if (value.user_id == 1) {
-                            array.push(`<div class='log my-log'><p>${value.user_id}<span> ${result_time_diff}投稿</span></p><p class='oritext'>${value.text}</p><p>${value.trans_text}</p><div>`);
+                            const newText = AutoLink(value.text);
+                            array.push(`<div class='log my-log'><p>${value.user_id}<span> ${result_time_diff}投稿</span></p><p class='oritext'>${newText}</p><p>${value.trans_text}</p><div>`);
+                            if (newText.includes('<a href')){
+                                const data = {
+                                    key: '343f9edd1eaa37dcbaacb5482a884a71',
+                                    q: value.text
+                                }
+                                fetch('https://api.linkpreview.net', {
+                                    method: 'POST',
+                                    mode: 'cors',
+                                    body: JSON.stringify(data),
+                                })
+                                .then(data => data.json())
+                                .then(json => array.push(`<div class='log my-log'><a href='${json.url}' target='_blank'><img src='${json.image}' width='187.5'><p>${json.title}</p></a>`));
+                            }
+                            if (value.upfile !== null) {
+                                const fileType = value.upfile.split('.').pop();
+                                if (fileType === 'jpg' || fileType === 'png' || fileType === 'webp' || fileType === 'bmp' || fileType === 'gif' || fileType === 'tiff' || fileType === 'svg'){
+                                    array.push(`<div class='log my-log'><a href='${value.upfile}' data-lightbox='group'><img src='${value.upfile}' height="117"></a></div>`);
+                                } else if (fileType === 'mp3' || fileType === 'wav' || fileType === 'flac' || fileType === 'm4a' || fileType === 'wma' || fileType === 'ogx'){
+                                    array.push(`<div class='log my-log'><audio controls src='${value.upfile}'></audio></div>`);
+                                } else if (fileType === 'avi'| fileType === 'mp4' || fileType === 'mov' || fileType === 'wmv' || fileType === 'mpg' || fileType === 'mkv' || fileType === 'flv' || fileType === 'asf'){
+                                    array.push(`<div class='log my-log'><video controls src='${value.upfile}' width="117"></video></a></div>`);
+                                }
+                            }
                         } else {
-                            array.push(`<div class='log other-log'><p>${value.user_id}<span> ${result_time_diff}投稿</span></p><p class='oritext'>${value.text}</p><p>${value.trans_text}</p><div>`);
+                            const newText = AutoLink(value.text);
+                            if (newText.includes('<a href')){
+                                const data = {
+                                    key: '343f9edd1eaa37dcbaacb5482a884a71',
+                                    q: value.text
+                                }
+                                fetch('https://api.linkpreview.net', {
+                                    method: 'POST',
+                                    mode: 'cors',
+                                    body: JSON.stringify(data),
+                                })
+                                .then(data => data.json())
+                                .then(json => array.push(`<div class='log other-log'><p>${value.user_id}<span> ${result_time_diff}投稿</span></p><p class='oritext'>${newText}</p><a href='${json.url}' target='_blank'><img src='${json.image}' width='187.5'><p>${json.title}</p></a>`));
+                            } else {
+                                array.push(`<div class='log other-log'><p>${value.user_id}<span> ${result_time_diff}投稿</span></p><p class='oritext'>${newText}</p><p>${value.trans_text}</p><div>`);
+                            }
+                            if (value.upfile !== null) {
+                                const fileType = value.upfile.split('.').pop();
+                                if (fileType === 'jpg' || fileType === 'png' || fileType === 'webp' || fileType === 'bmp' || fileType === 'gif' || fileType === 'tiff' || fileType === 'svg'){
+                                    array.push(`<div class='log other-log'><a href='${value.upfile}' data-lightbox='group'><img src='${value.upfile}' height="97"></a></div>`);
+                                } else if (fileType === 'mp3' || fileType === 'wav' || fileType === 'flac' || fileType === 'm4a' || fileType === 'wma' || fileType === 'ogx'){
+                                    array.push(`<div class='log other-log'><audio controls src='${value.upfile}'></audio></div>`);
+                                } else if (fileType === 'avi'| fileType === 'mp4' || fileType === 'mov' || fileType === 'wmv' || fileType === 'mpg' || fileType === 'mkv' || fileType === 'flv' || fileType === 'asf'){
+                                    array.push(`<div class='log other-log'><video controls src='${value.upfile}' width="117"></video></div>`);
+                                }
+                            }
                         }
                     });
-                    $('#output').html(array);
-                    $('#output')[0].scrollIntoView(false);
+                    setTimeout(function(){
+                        $('#output').html(array);
+                        $('#output')[0].scrollIntoView(false);
+                    }, 1000)
                 });
+        }
+
+        function AutoLink(text) {
+            var str = text;
+            var regexp_url = /((h?)(ttps?:\/\/[a-zA-Z0-9.\-_@:/~?%&;=+#',()*!]+))/g;
+            var regexp_makeLink = function(all, url, h, href) {
+                return '<a href="h' + href + '" target="_blank" id="link">' + url + '</a>';
+            }
+            var textWithLink = str.replace(regexp_url, regexp_makeLink);
+            return textWithLink;
         }
 
         $(function () {
             getLog();
         });
 
+        let upfile;
+        $('#input-file').on('change', function(){
+            upfile = this.files[0];
+        });
+
 
         $('#text-form').on('change', function () {
             if ($('#text-form').val() !== '') {
                 $('#send').addClass('active');
-                $('#text-form').css('width', '64%');
+                $('#text-form').addClass('active');
             } else {
                 $('#send').removeClass('active');
-                $('#text-form').css('width', 'calc(80% + 16px)');
+                $('#text-form').removeClass('active');
             }
         });
         var conn = "";
@@ -317,6 +369,7 @@
 
         function send() {
             const text = $('#text-form').val();
+            console.log(text);
             if (text !== '') {
                 const textFormData = new FormData();
                 textFormData.append('text', text);
@@ -327,6 +380,7 @@
                         const transTextFormData = new FormData();
                         transTextFormData.append('text', text);
                         transTextFormData.append('trans-text', response.data);
+                        transTextFormData.append('upfile', upfile);
                         axios({
                             method: 'post',
                             url: 'chat-post.php',
@@ -336,6 +390,7 @@
                             .then(function (response) {
                                 // console.log(response);
                                 const array = [];
+                                console.log(response.data);
                                 response.data.forEach(value => {
                                     const date = new Date().getTime();
                                     const timestamp = new Date(value.created_at).getTime();
@@ -354,14 +409,68 @@
                                         result_time_diff = `${date_diff}日前に`;
                                     }
                                     if (value.user_id == 1) {
-                                        array.push(`<div class='log my-log'><p>${value.user_id}<span> ${result_time_diff}投稿</span></p><p class='oritext'>${value.text}</p><p>${value.trans_text}</p><div>`);
+                                        const newText = AutoLink(value.text);
+                                        array.push(`<div class='log my-log'><p>${value.user_id}<span> ${result_time_diff}投稿</span></p><p class='oritext'>${newText}</p><p>${value.trans_text}</p><div>`);
+                                        if (newText.includes('<a href')){
+                                            const data = {
+                                                key: '343f9edd1eaa37dcbaacb5482a884a71',
+                                                q: value.text
+                                            }
+                                            fetch('https://api.linkpreview.net', {
+                                                method: 'POST',
+                                                mode: 'cors',
+                                                body: JSON.stringify(data),
+                                            })
+                                            .then(data => data.json())
+                                            .then(json => array.push(`<div class='log my-log'><a href='${json.url}' target='_blank'><img src='${json.image}' width='187.5'><p>${json.title}</p></a>`));
+                                        }
+                                        if (value.upfile !== null) {
+                                            const fileType = value.upfile.split('.').pop();
+                                            if (fileType === 'jpg' || fileType === 'png' || fileType === 'webp' || fileType === 'bmp' || fileType === 'gif' || fileType === 'tiff' || fileType === 'svg'){
+                                                array.push(`<div class='log my-log'><a href='${value.upfile}' data-lightbox='group'><img src='${value.upfile}' height="117"></a></div>`);
+                                            } else if (fileType === 'mp3' || fileType === 'wav' || fileType === 'flac' || fileType === 'm4a' || fileType === 'wma' || fileType === 'ogx'){
+                                                array.push(`<div class='log my-log'><audio controls src='${value.upfile}'></audio></div>`);
+                                            } else if (fileType === 'avi'| fileType === 'mp4' || fileType === 'mov' || fileType === 'wmv' || fileType === 'mpg' || fileType === 'mkv' || fileType === 'flv' || fileType === 'asf'){
+                                                array.push(`<div class='log my-log'><video controls src='${value.upfile}' width="117"></video></div>`);
+                                            }
+                                        }
                                     } else {
-                                        array.push(`<div class='log other-log'><p>${value.user_id}<span> ${result_time_diff}投稿</span></p><p class='oritext'>${value.text}</p><p>${value.trans_text}</p><div>`);
+                                        const newText = AutoLink(value.text);
+                                        if (newText.includes('<a href')){
+                                            const data = {
+                                                key: '343f9edd1eaa37dcbaacb5482a884a71',
+                                                q: value.text
+                                            }
+                                            fetch('https://api.linkpreview.net', {
+                                                method: 'POST',
+                                                mode: 'cors',
+                                                body: JSON.stringify(data),
+                                            })
+                                            .then(data => data.json())
+                                            .then(json => array.push(`<div class='log other-log'><p>${value.user_id}<span> ${result_time_diff}投稿</span></p><p class='oritext'>${newText}</p><a href='${json.url}' target='_blank'><img src='${json.image}' width='187.5'><p>${json.title}</p></a>`));
+
+                                        } else {
+                                            setTimeout(function(){
+                                                array.push(`<div class='log other-log'><p>${value.user_id}<span> ${result_time_diff}投稿</span></p><p class='oritext'>${newText}</p><p>${value.trans_text}</p><div>`);
+                                            }, 100);
+                                        }
+                                        if (value.upfile !== null) {
+                                            const fileType = value.upfile.split('.').pop();
+                                            if (fileType === 'jpg' || fileType === 'png' || fileType === 'webp' || fileType === 'bmp' || fileType === 'gif' || fileType === 'tiff' || fileType === 'svg'){
+                                                array.push(`<div class='log other-log'><a href='${value.upfile}' data-lightbox='group'><img src='${value.upfile}' height="97"></a></div>`);
+                                            } else if (fileType === 'mp3' || fileType === 'wav' || fileType === 'flac' || fileType === 'mp4' || fileType === 'm4a' || fileType === 'wma' || fileType === 'ogx'){
+                                                array.push(`<div class='log other-log'><audio controls src='${value.upfile}'></audio></div>`);
+                                            } else if (fileType === 'avi'| fileType === 'mp4' || fileType === 'mov' || fileType === 'wmv' || fileType === 'mpg' || fileType === 'mkv' || fileType === 'flv' || fileType === 'asf'){
+                                                array.push(`<div class='log other-log'><video controls src='${value.upfile}' width="117"></video></div>`);
+                                            }
+                                        }
                                     }
                                 });
-                                $('#output').html(array);
-                                conn.send(text);
-                                $('#output')[0].scrollIntoView(false);
+                                setTimeout(function(){
+                                    $('#output').html(array);
+                                    conn.send(text);
+                                    $('#output')[0].scrollIntoView(false);
+                                }, 1000)
                             })
                             .catch(function (error) {
                                 console.log('post error');
