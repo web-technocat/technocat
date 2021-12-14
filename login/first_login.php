@@ -30,7 +30,7 @@ if (count($err) > 0) {
   //エラーがあった場合
   //セッションにエラーメッセージを入れて、ログイン画面に戻す
   $_SESSION = $err;
-  header('Location:../login/login_form.php');
+  header('Location:../login/first_login_form.php');
   return; //処理を止める
 };
 
@@ -68,20 +68,19 @@ if (count($err) === 0) {
       exit();
     } else {
       //ユーザーであれば、マイページへ遷移
-      header("Location:../takeshi/room_list.php");
-      // header("Location:../room_list.php");
+      header("Location:../Profile/profile_input.php");
       exit();
     }
   }
-  // }else{
-  //   // $message = "ログイン情報に誤りがあります";
-  //   // $link = "<a href=login_form.php>ログイン</a>";
+  // } else {
   //   echo "<p>ログイン情報に誤りがあります</p>";
-  //   echo "<a href=login_form.php>ログイン</a>";
+  //   echo "<a href=first_login_form.php>ログイン</a>";
   //   exit();
   // }
 }
+
 ?>
+
 
 <!DOCTYPE html>
 <html lang="ja">
@@ -106,23 +105,37 @@ if (count($err) === 0) {
 
     .button {
       display: inline-block;
-      border-radius: 5%;/* 角丸       */
-      font-size: 18pt;/* 文字サイズ */
-      text-align: center;/* 文字位置   */
-      cursor: pointer;/* カーソル   */
-      padding: 12px 12px;/* 余白       */
-      background: #000066;/* 背景色     */
-      color: #ffffff !important;/* 文字色     */
-      line-height: 1em;/* 1行の高さ  */
-      transition: .3s;/* なめらか変化 */
-      box-shadow: 6px 6px 3px #666666;/* 影の設定 */
-      border: 2px solid #000066;/* 枠の指定 */
+      border-radius: 5%;
+      /* 角丸       */
+      font-size: 18pt;
+      /* 文字サイズ */
+      text-align: center;
+      /* 文字位置   */
+      cursor: pointer;
+      /* カーソル   */
+      padding: 12px 12px;
+      /* 余白       */
+      background: #000066;
+      /* 背景色     */
+      color: #ffffff !important;
+      /* 文字色     */
+      line-height: 1em;
+      /* 1行の高さ  */
+      transition: .3s;
+      /* なめらか変化 */
+      box-shadow: 6px 6px 3px #666666;
+      /* 影の設定 */
+      border: 2px solid #000066;
+      /* 枠の指定 */
     }
 
     .button:hover {
-      box-shadow: none;/* カーソル時の影消去 */
-      color: #000066 !important;/* 背景色     */
-      background: #ffffff;/* 文字色     */
+      box-shadow: none;
+      /* カーソル時の影消去 */
+      color: #000066 !important;
+      /* 背景色     */
+      background: #ffffff;
+      /* 文字色     */
     }
   </style>
 </head>
@@ -131,7 +144,7 @@ if (count($err) === 0) {
   <div class="container">
     <?php if (!password_verify($_POST['password'], $val['password'])) : ?>
       <p>ログイン情報に<br>誤りがあります</p>
-      <a href="./login_form.php" class="button">ログイン</a>
+      <a href="./first_login_form.php" class="button">ログイン</a>
     <?php endif ?>
   </div>
 </body>

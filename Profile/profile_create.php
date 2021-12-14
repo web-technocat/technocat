@@ -16,46 +16,18 @@ include("../functions.php");
 //セッション状態確認
 check_session_id();
 
-//-----バリデーション-----//
-//エラーメッセージ
-// $err = [];
-// //性別
-// if (!$gender = $_POST['gender']) {
-//   $err['gender'] = '性別を入力してください!!';
-// }
-// //生年月日
-// if (!$birth = $_POST['birth']) {
-//   $err['birth'] = '生年月日を入力してください!!';
-// }
-// //使用言語
-// if (!$language = $_POST['language']) {
-//   $err['language'] = '使用言語を入力してください!!';
-// }
-// //趣味
-// if (!$hobby = $_POST['hobby']) {
-//   $err['hobby'] = '趣味を入力してください!!';
-// }
 
-//-----新規登録時にエラーがあった場合に新規登録フォームに表示-----//
-// if (count($err) > 0) {
-//   //エラーがあった場合
-//   //セッションにエラーメッセージを入れて、ログイン画面に戻す
-//   $_SESSION = $err;
-//   header('Location:profile_input.php');
-//   return; //処理を止める
-// };
-
-// //入力項目のチェック
-// if (
-//   !isset($_POST['gender']) || $_POST['gender'] == '' ||
-//   !isset($_POST['birth']) || $_POST['birth'] == '' ||
-//   !isset($_POST['language']) || $_POST['language'] == '' ||
-//   !isset($_POST['hobby']) || $_POST['hobby'] == '' ||
-//   !isset($_POST['user_id']) || $_POST['user_id'] == ''
-// ) {
-//   echo json_encode(["error_msg" => "no input"]);
-//   exit();
-// }
+//入力項目のチェック
+if (
+  !isset($_POST['gender']) || $_POST['gender'] == '' ||
+  !isset($_POST['birth']) || $_POST['birth'] == '' ||
+  !isset($_POST['language']) || $_POST['language'] == '' ||
+  !isset($_POST['hobby']) || $_POST['hobby'] == '' ||
+  !isset($_POST['user_id']) || $_POST['user_id'] == ''
+) {
+  echo json_encode(["error_msg" => "no input"]);
+  exit();
+}
 
 // //値の取得
 $gender = $_POST['gender'];
@@ -133,5 +105,5 @@ $pdo = connect_to_db();
     exit();
   }
   //TOP画面へ遷移
-  header("Location:../room_list.php");
+  header("Location:../takeshi/room_list.php");
   exit();
