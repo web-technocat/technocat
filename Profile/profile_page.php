@@ -11,18 +11,18 @@ check_session_id();
 //DB接続
 $pdo = connect_to_db();
 
-
 //ログイン中のユーザー確認
-$user_id = $_get['key'];
+$user_id = $_GET['key'];
 
 
 // ユーザー情報
 //SQL作成
 //user_table(a)とprofile_table(b)を結合
-$sql = "SELECT a.id,a.username,b.gender,b.language,b.hobby,b.image,b.user_id FROM users_table AS a LEFT OUTER JOIN profile_table AS b ON a.id = b.user_id";
+$sql = "SELECT a.id,a.username,b.gender,b.language,b.hobby,b.image, b.self_introduction, b.user_id FROM users_table AS a LEFT OUTER JOIN profile_table AS b ON a.id = b.user_id WHERE a.id = :user_id";
 
 //SQL準備
 $stmt = $pdo->prepare($sql);
+$stmt->bindValue(':user_id', $user_id, PDO::PARAM_STR);
 //今回は"ユーザーが入力したデータ"を使用しないのでバインド変数は不要
 //SQL実行
 try {
@@ -34,6 +34,10 @@ try {
 //SQL実行処理内容
 $record = $stmt->fetch(PDO::FETCH_ASSOC);
 
+// echo '<pre>';
+// var_dump($record);
+// echo '</pre>';
+// exit();
 //性別の表示方法
 
 ?>
