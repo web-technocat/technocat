@@ -18,7 +18,7 @@ if (
 //値取得
 $username = $_POST["username"];
 $email = $_POST["email"];
-$password = $_POST["password"];
+$password = password_hash($_POST["password"], PASSWORD_DEFAULT);
 $id = $_POST["id"];
 //DB接続
 $pdo = connect_to_db();

@@ -87,26 +87,26 @@ if (isset($_FILES['upfile']) && $_FILES['upfile']['error'] == 0) {
 $pdo = connect_to_db();
 
 
-  //SQL作成
-  $sql = "INSERT INTO profile_table(id, gender, birth, language,hobby,image,self_introduction,user_id,created_at,updated_at) VALUES(NULL,:gender,:birth,:language,:hobby,:image,:self_introduction,:user_id,now(), now())";
+//SQL作成
+$sql = "INSERT INTO profile_table(id, gender, birth, language,hobby,image,self_introduction,user_id,created_at,updated_at) VALUES(NULL,:gender,:birth,:language,:hobby,:image,:self_introduction,:user_id,now(), now())";
 
-  //SQL準備
-  $stmt = $pdo->prepare($sql);
-  //バインド変数
-  $stmt->bindValue(':gender', $gender, PDO::PARAM_STR);
-  $stmt->bindValue(':birth', $birth, PDO::PARAM_STR);
-  $stmt->bindValue(':language', $language, PDO::PARAM_STR);
-  $stmt->bindValue(':hobby', $hobby, PDO::PARAM_STR);
-  $stmt->bindValue(':image', $save_path, PDO::PARAM_STR);
-  $stmt->bindValue(':self_introduction', $self_introduction, PDO::PARAM_STR);
-  $stmt->bindValue(':user_id', $user_id, PDO::PARAM_STR);
-  //SQL実行
-  try {
-    $status = $stmt->execute();
-  } catch (PDOException $e) {
-    echo json_encode(["sql error" => "{$e->getMessage()}"]);
-    exit();
-  }
-  //TOP画面へ遷移
-  header("Location:../takeshi/room_list.php");
+//SQL準備
+$stmt = $pdo->prepare($sql);
+//バインド変数
+$stmt->bindValue(':gender', $gender, PDO::PARAM_STR);
+$stmt->bindValue(':birth', $birth, PDO::PARAM_STR);
+$stmt->bindValue(':language', $language, PDO::PARAM_STR);
+$stmt->bindValue(':hobby', $hobby, PDO::PARAM_STR);
+$stmt->bindValue(':image', $save_path, PDO::PARAM_STR);
+$stmt->bindValue(':self_introduction', $self_introduction, PDO::PARAM_STR);
+$stmt->bindValue(':user_id', $user_id, PDO::PARAM_STR);
+//SQL実行
+try {
+  $status = $stmt->execute();
+} catch (PDOException $e) {
+  echo json_encode(["sql error" => "{$e->getMessage()}"]);
   exit();
+}
+//TOP画面へ遷移
+header("Location:../takeshi/room_list.php");
+exit();
