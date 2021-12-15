@@ -71,6 +71,8 @@ try {
 }
 // 実行内容
 $member = $stmt->fetch(PDO::FETCH_ASSOC);
+var_dump($member);
+exit();
 
 if ($member['email'] === $email) {
   $message = "<p>同じメールアドレスが存在します．</p>";
@@ -96,8 +98,8 @@ try {
 }
 // var_dump($status);
 // exit();
-$message = "<p>ユーザー登録<br>完了しました</p>";
-$link = "<a href=../login/first_login_form.php class=button>ログインページ</a>";
+$message = "<p>Completed<br>Register</p>";
+$link = "<a href=../login/first_login_form.php class=button>Login</a>";
 // }
 
 

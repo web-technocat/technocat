@@ -7,6 +7,7 @@ include("../functions.php");
 check_session_id();
 //取得したIDを定義
 $id = $_GET["id"];
+
 // var_dump($id);
 // exit();
 
@@ -14,7 +15,7 @@ $id = $_GET["id"];
 $pdo = connect_to_db();
 //SQL作成
 //idが一致しているものを取得
-$sql = "UPDATE users_table SET is_deleted = 1,updated_at = now() WHERE id=:id";
+$sql = "UPDATE users_table SET is_deleted = 1,updated_at = now(),WHERE id=:id";
 // $sql="UPDATE users_table AS a JOIN profile_table AS b ON a.id = b.user_id SET a.is_deleted = 1, a.updated_at = now() WHERE a.id = :id";
 //SQL準備
 $stmt = $pdo->prepare($sql);

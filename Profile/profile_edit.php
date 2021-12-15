@@ -11,20 +11,24 @@ check_session_id();
 
 //取得したidを定義(編集,削除などに使う)
 $id = $_GET["id"];
+// var_dump($id);
+// exit();
 
 //ログイン状態のユーザー確認
 $user_id = $_SESSION['user_id'];
+// var_dump($user_id);
+// exit();
 
 //DB接続
 $pdo = connect_to_db();
 
 //SQL作成
 //idが一致しているものを取得
-$sql = 'SELECT * FROM profile_table WHERE id=:id';
+$sql = 'SELECT * FROM profile_table WHERE user_id=:user_id';
 //SQL準備
 $stmt = $pdo->prepare($sql);
 //バインド変数
-$stmt->bindValue(':id', $id, PDO::PARAM_INT);
+$stmt->bindValue(':user_id', $user_id, PDO::PARAM_INT);
 //SQL実行
 try {
   $status = $stmt->execute();
@@ -49,51 +53,70 @@ $record = $stmt->fetch(PDO::FETCH_ASSOC);
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>プロフィール（編集画面）</title>
+  <title>プロフィール編集画面</title>
   <link rel="stylesheet" href="../css/reset.css">
   <link rel="stylesheet" href="../css/miyuki.css">
-  <link rel="stylesheet" href="../css/profile.css">
+  <style>
+    .container {
+      text-align: center;
+    }
+
+    .control {
+      margin-bottom: 15px;
+    }
+
+    form {
+      padding-top: 150px;
+    }
+
+    label {
+      font-size: 15px;
+      font-weight: bold;
+      margin-bottom: 10px;
+    }
+  </style>
 </head>
 
 <body>
   <div class="container">
     <form action="profile_update.php" method="POST" enctype="multipart/form-data">
-      <h1>プロフィール編集画面</h1>
+      <h1>Profile Edit</h1>
       <br>
 
       <div class="control">
-        <label for="gender">性別</label>
+        <label for="gender">Gender</label>
         <!-- 三項演算子（genderが0→男性にchecked） -->
-        <input id="gender" type="radio" name="gender" value="0" <?= $record['gender'] == 0 ? 'checked' : ''; ?> disabled>男性
+        <input id="gender" type="radio" name="gender" value="0" <?= $record['gender'] == 0 ? 'checked' : ''; ?> disabled>Gentleman
         <!-- 三項演算子（genderが1→女性にchecked） -->
-        <input id="gender" type="radio" name="gender" value="1" <?= $record['gender'] == 1 ? 'checked' : ''; ?> disabled>女性
+        <input id="gender" type="radio" name="gender" value="1" <?= $record['gender'] == 1 ? 'checked' : ''; ?> disabled>Lady
       </div>
 
       <div class="control">
-        <label for="birth">生年月日</label>
+        <label for="birth">Birth Day</label>
         <input id="birth" type="date" name="birth" value="<?= $record['birth'] ?>" disabled">
       </div>
 
       <div class="control">
-        <label for="language">使用言語</label>
+        <label for="language">Language</label>
         <!-- 三項演算子（languageが0→日本語にchecked） -->
-        <input id="language" type="radio" name="language" value="0" <?= $record['language'] == 0 ? 'checked' : ''; ?>>日本語
+        <input id="language" type="radio" name="language" value="0" <?= $record['language'] == 0 ? 'checked' : ''; ?>>Japanese
         <!-- 三項演算子（languageが1→英語にchecked） -->
-        <input id="language" type="radio" name="language" value="1" <?= $record['language'] == 1 ? 'checked' : ''; ?>>英語
+        <input id="language" type="radio" name="language" value="1" <?= $record['language'] == 1 ? 'checked' : ''; ?>>English
       </div>
 
       <div class="control">
-        <label for="hobby">趣味</label>
+        <label for="hobby">Hobby</label>
         <input id="hobby" type="text" name="hobby" value="<?= $record['hobby'] ?>">
       </div>
 
       <div class="control">
-        <label for="upfile">プロフィール画像</label>
-        <input id="upfile" type="file" name="upfile" accept="image/*" capture="camera" value="<?= $record['image'] ?>">
+        <label for="upfile">Profile Image</label><br>
+        <img src="<?= $record['image'] ?>" alt="" width="100px" height="100px" style=border-radius:50%;><br>
+        <input id="upfile" type="file" name="upfile" accept="image/*" capture="camera">
       </div>
 
       <div class="control">
-        <label for="self_introduction">何か一言</label><br>
+        <label for="self_introduction">Self Introduction</label><br>
         <textarea id="self_introduction" name="self_introduction" cols="30" rows="5"></textarea>
       </div>
 
@@ -103,7 +126,7 @@ $record = $stmt->fetch(PDO::FETCH_ASSOC);
         <input type="submit" value="更新">
       </div>
     </form>
-    <a href="../member_list.php">マイページ</a>
+    <a href="../takeshi/member_list.php">HOME</a>
     <a href="../login/logout.php">logout</a>
   </div>
 

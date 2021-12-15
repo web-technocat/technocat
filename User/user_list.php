@@ -30,37 +30,6 @@ try {
 //SQL実行処理内容
 $result = $stmt->fetchAll(PDO::FETCH_ASSOC);
 
-// //プロフィール画像取り込み
-// //SQL作成
-// $sql = "SELECT * FROM profile_table WHERE user_id = :user_id";
-// //SQL準備
-// $stmt = $pdo->prepare($sql);
-// //バインド関数
-// $stmt->bindValue(':user_id', $user_id, PDO::PARAM_STR);
-// //SQL実行
-// try {
-//   $status = $stmt->execute();
-// } catch (PDOException $e) {
-//   echo json_encode(["sql error" => "{$e->getMessage()}"]);
-//   exit();
-// }
-// //SQL実行処理内容
-// $result = $stmt->fetchAll(PDO::FETCH_ASSOC);
-
-//繰り返し処理でHTML文に表示
-// $output = "";
-// foreach ($result as $record) {
-//   $output .= "
-//   <tr>
-//     <td>{$record["username"]}</td>
-//     <td>
-//         <a href=user_edit.php?id={$record["id"]}>edit</a>
-//       </td>
-//       <td>
-//         <a href=user_delete.php?id={$record["id"]}>delete</a>
-//       </td>
-//     </tr>";
-// }
 ?>
 
 <!DOCTYPE html>
@@ -101,7 +70,7 @@ $result = $stmt->fetchAll(PDO::FETCH_ASSOC);
       padding: 10px 0;
     }
 
-    p{
+    p {
       font-weight: bold;
     }
 
@@ -117,7 +86,7 @@ $result = $stmt->fetchAll(PDO::FETCH_ASSOC);
     <header>
       <!-- ヘッダー左 -->
       <div class="header-left">
-        <h2>ユーザー管理画面</h2>
+        <h2>Manage Users</h2>
       </div>
       <!-- ヘッダー右 -->
       <div class="header-right">
@@ -136,14 +105,13 @@ $result = $stmt->fetchAll(PDO::FETCH_ASSOC);
       <tr>
         <th>User Image</th>
         <th>User Name</th>
-        <a href="../Profile/profile_page.php">aaa</a>
       </tr>
 
       <?php foreach ($result as $record) { ?>
         <tr class="point">
           <!-- プロフィール画像 -->
           <td>
-            <img src="<?= $record['image'] ?>" alt="" height="50px">
+            <img src="<?= $record['image'] ?>" alt="" height="50px" width="50px" style="border-radius:50%;">
           </td>
           <!-- ユーザーネーム -->
           <td>
