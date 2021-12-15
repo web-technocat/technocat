@@ -52,6 +52,7 @@ $record = $stmt->fetch(PDO::FETCH_ASSOC);
   <title>プロフィール（編集画面）</title>
   <link rel="stylesheet" href="../css/reset.css">
   <link rel="stylesheet" href="../css/miyuki.css">
+  <link rel="stylesheet" href="../css/profile.css">
 </head>
 
 <body>
@@ -89,6 +90,11 @@ $record = $stmt->fetch(PDO::FETCH_ASSOC);
       <div class="control">
         <label for="upfile">プロフィール画像</label>
         <input id="upfile" type="file" name="upfile" accept="image/*" capture="camera" value="<?= $record['image'] ?>">
+      </div>
+
+      <div class="control">
+        <label for="self_introduction">何か一言</label><br>
+        <textarea id="self_introduction" name="self_introduction" cols="30" rows="5"></textarea>
       </div>
 
       <!-- 次の更新処理でidが必要になるため，<input type="hidden">を用いてidを送信する． -->

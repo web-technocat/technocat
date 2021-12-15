@@ -12,7 +12,11 @@ $pdo = connect_to_db();
 
 // ユーザー情報
 //SQL作成
-$sql = "SELECT username, user_id , image, is_admin FROM users_table LEFT OUTER JOIN profile_table ON users_table.id = profile_table.user_id WHERE is_admin = 0;";
+//user_table(a)とprofile_table(b)を結合
+$sql = "SELECT a.id,a.username,a.password,a.is_admin,a.is_deleted,a.created_at,a.updated_at,b.image,b.user_id FROM users_table AS a LEFT OUTER JOIN profile_table AS b ON a.id = b.user_id WHERE a.is_admin = 0";
+
+// $sql = "SELECT username, user_id , image, is_admin FROM users_table LEFT OUTER JOIN profile_table ON users_table.id = profile_table.user_id WHERE is_admin = 0";
+
 //SQL準備
 $stmt = $pdo->prepare($sql);
 //今回は"ユーザーが入力したデータ"を使用しないのでバインド変数は不要
@@ -132,6 +136,7 @@ $result = $stmt->fetchAll(PDO::FETCH_ASSOC);
       <tr>
         <th>User Image</th>
         <th>User Name</th>
+        <a href="../Profile/profile_page.php">aaa</a>
       </tr>
 
       <?php foreach ($result as $record) { ?>
