@@ -45,7 +45,7 @@ $_SESSION['imgUrl'] = $login_user['image'];
 $sql = 'SELECT x.id,room_name,room_type,host_user,username,image 
 FROM room_table as x LEFT JOIN users_table as y ON x.host_user = y.id 
 LEFT JOIN profile_table as z ON y.id = z.user_id 
-WHERE room_type = 0 ORDER BY x.created_at DESC';
+WHERE room_type = 1 ORDER BY x.created_at DESC';
 
 $stmt = $pdo->prepare($sql);
 
@@ -92,19 +92,18 @@ $username = $_SESSION['username'];
   <meta charset="UTF-8">
   <meta http-equiv="X-UA-Compatible" content="IE=edge">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>room list</title>
+  <title>private</title>
 
   <!-- reset.css読み込み -->
   <link rel="stylesheet" href="../css/reset.css">
   <!-- takeshi.css読み込み -->
   <link rel="stylesheet" href="./css/takeshi.css">
-
+  
   <!-- line-awesome読み込み -->
   <link rel="stylesheet" href="https://maxst.icons8.com/vue-static/landings/line-awesome/line-awesome/1.3.0/css/line-awesome.min.css">
 
 
 </head>
-
 <body>
 
   <div id="wrapper_y">
@@ -132,16 +131,15 @@ $username = $_SESSION['username'];
 
       <!-- ルームタイプ切り替えボタン -->
       <section id="type_view">
-        <p>トークルーム一覧</p>
-        <a href="private.php" id="change_btn">プライベート</a>
+        <p>プライベートルーム</p>
+        <a href="room_list.php" id="change_btn">グループ</a>
       </section>
 
       <!-- トークルーム一覧出力部分 -->
       <section id="room_section">
         <ul id="result">
-          <?= $output ?>
-          <!-- php側でエスケープ処理済-->
-          <ul>
+          <?= $output ?><!-- php側でエスケープ処理済-->
+        <ul>
       </section>
 
 
@@ -162,6 +160,7 @@ $username = $_SESSION['username'];
   <script src="./js/takeshi.js"></script>
 
   <script>
+    
     //スワイプしてリロードする関数
     function setSwipe(swiped_content) {
       var s_Y; // スワイプ開始位置の定義
@@ -185,12 +184,12 @@ $username = $_SESSION['username'];
         }
       });
     }
-
+    
     //関数実行(body);
     setSwipe('body');
+    
 
-
-    //--------検索部分--------------------------------------//
+//--------検索部分--------------------------------------//
 
 
     //検索ワード入力欄のキーを上げたら発動
@@ -200,7 +199,7 @@ $username = $_SESSION['username'];
       const requestUrl = "room_search.php"; //送信先ファイル
 
       axios
-        .get(`${requestUrl}?searchword=${searchWord}&type=0`)
+        .get(`${requestUrl}?searchword=${searchWord}&type=1`)
         .then(function(response) { //responseにデータ受け取り
           console.log(response.data);
           //表示のための配列

@@ -15,31 +15,8 @@ check_room_session_id();
 
 //セッションからuserIDを取得
 $user_id = $_SESSION['user_id'];
-
 // DB接続
 $pdo = connect_to_db();
-
-//-----------------ログインユーザー情報取得-------------------------------------------//
-
-//users_tableとprofile_tableを結合して現在ログインしているユーザーの情報を取得
-$sql = 'SELECT users_table.id,username,image 
-FROM users_table LEFT JOIN profile_table 
-ON users_table.id = profile_table.user_id 
-WHERE users_table.id = :user_id';
-
-$stmt = $pdo->prepare($sql);
-$stmt->bindValue(':user_id', $user_id, PDO::PARAM_INT);
-
-try {
-  $status = $stmt->execute();
-} catch (PDOException $e) {
-  echo json_encode(["sql error" => "{$e->getMessage()}"]);
-  exit();
-}
-//$login_userに結果を受け取る
-$login_user = $stmt->fetch(PDO::FETCH_ASSOC);
-//imageのURLのパスを代入
-$imgUrl = $login_user['image'];
 
 //-----------------トークルーム情報取得----------------------------------------------//
 
@@ -59,10 +36,19 @@ try {
 //$resultにデータを取得
 $result = $stmt->fetch(PDO::FETCH_ASSOC);
 
+if (!$result) {
+  header("Location:no_room.php");
+  exit();
+}
+
+// var_dump($result);
+// exit();
+
+
 //-----------------チェックイン情報取得----------------------------------------------//
 
 //SQL処理 room_table(x)とusers_table(y)とprofile_table(z)を結合して取得
-$sql = 'SELECT x.room_id,username,image FROM checkin_table as x LEFT JOIN users_table as y ON x.user_id = y.id LEFT JOIN profile_table as z ON y.id = z.user_id where x.room_id = :room_id';
+$sql = 'SELECT y.id,x.room_id,username,image FROM checkin_table as x LEFT JOIN users_table as y ON x.user_id = y.id LEFT JOIN profile_table as z ON y.id = z.user_id where x.room_id = :room_id';
 
 $stmt = $pdo->prepare($sql);
 $stmt->bindValue(':room_id', $room_id, PDO::PARAM_STR);
@@ -77,15 +63,19 @@ try {
 //$memberにデータを取得
 $members = $stmt->fetchAll(PDO::FETCH_ASSOC);
 
+// var_dump($members);
+// exit();
+
 // タグをつけて表示
 foreach ($members as $member) {
   //エスケープ処理
+  $user_id = htmlspecialchars($member['id'], ENT_QUOTES);
   $room_id = htmlspecialchars($member['room_id'], ENT_QUOTES);
   $username = htmlspecialchars($member['username'], ENT_QUOTES);
   $image = htmlspecialchars($member['image'], ENT_QUOTES);
 
   $member_list .= "
-    <li class=checkin_member><img src ={$image} class=profile_img>{$username}</li>
+    <a href=../profile/profile_page.php?key={$user_id}><li class=checkin_member><img src ={$image} class=profile_img>{$username}</li></a>
   ";
 }
 
@@ -129,10 +119,10 @@ $username = $_SESSION['username'];
 
         <div id="host_view">
           <p>ホストユーザー</p>
-          <div id="host_user">
+          <a href="../profile/profile_page.php?key=<?= htmlspecialchars($result['host_user'], ENT_QUOTES); ?>" id="host_user">
             <img src=<?= htmlspecialchars($result['image'], ENT_QUOTES); ?> class="profile_img" alt="プロフィール画像">
             <p><?= htmlspecialchars($result['username'], ENT_QUOTES); ?></p>
-          </div>
+          </a>
         </div>
       </section>
 
@@ -140,7 +130,8 @@ $username = $_SESSION['username'];
       <section id="join_member">
         <p>参加中のメンバー</p>
         <ul>
-          <?= $member_list ?> <!-- php側でエスケープ処理済-->
+          <!-- php側でエスケープ処理済-->
+          <?= $member_list ?>
         </ul>
       </section>
 
@@ -148,8 +139,10 @@ $username = $_SESSION['username'];
       <form action="check_in.php" method="post">
         <!-- ルームナンバーを送るためのinput hidden -->
         <input type="hidden" name="room_id" value=<?= htmlspecialchars($result['id'], ENT_QUOTES); ?>>
+        <!-- ルームタイプを送るためのinput hidden -->
+        <input type="hidden" name="room_type" value=<?= htmlspecialchars($result['room_type'], ENT_QUOTES); ?>>
         <!-- 入室ボタン Join! -->
-        <button type="submit" id="join_btn">Join</button>
+        <button type="submit" id="join_btn">入室</button>
       </form>
 
     </div>
@@ -168,7 +161,6 @@ $username = $_SESSION['username'];
   <script src="./js/takeshi.js"></script>
 
   <script>
-
     //スワイプしてリロードする関数
     function setSwipe(swiped_content) {
       var s_Y; // スワイプ開始位置の定義
@@ -195,7 +187,6 @@ $username = $_SESSION['username'];
 
     //関数実行(body);
     setSwipe('body');
-
   </script>
 
 </body>

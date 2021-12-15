@@ -1,6 +1,5 @@
 <?php
-//-------ルーム作成の入力画面です-------------------------------------//
-
+//--------フォロー一覧のページです-------------------------------------------
 //セッションの開始
 session_start();
 //関数ファイル読み込み
@@ -15,11 +14,33 @@ $user_id = $_SESSION['user_id'];
 // DB接続
 $pdo = connect_to_db();
 
+//-----------------ログインユーザー情報取得-------------------------------------------//
+
+//users_tableとprofile_tableを結合して現在ログインしているユーザーの情報を取得
+$sql = 'SELECT users_table.id,username,image 
+FROM users_table LEFT JOIN profile_table 
+ON users_table.id = profile_table.user_id 
+WHERE users_table.id = :user_id';
+
+$stmt = $pdo->prepare($sql);
+$stmt->bindValue(':user_id', $user_id, PDO::PARAM_INT);
+
+try {
+  $status = $stmt->execute();
+} catch (PDOException $e) {
+  echo json_encode(["sql error" => "{$e->getMessage()}"]);
+  exit();
+}
+//$login_userに結果を受け取る
+$login_user = $stmt->fetch(PDO::FETCH_ASSOC);
+//ログインしているユーザーのimageのパスを取得
+$imgUrl = $login_user['image'];
 
 //タイトル表示のための変数
-$title = "トークルーム作成";
+$title = "FRIENDS";
 //ユーザー名表示のための変数
 $username = $_SESSION['username'];
+
 
 ?>
 
@@ -31,7 +52,7 @@ $username = $_SESSION['username'];
   <meta http-equiv="X-UA-Compatible" content="IE=edge">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-  <title>room input</title>
+  <title>FRIENDS</title>
 
   <!-- reset.css読み込み -->
   <link rel="stylesheet" href="../css/reset.css">
@@ -39,41 +60,23 @@ $username = $_SESSION['username'];
   <link rel="stylesheet" href="./css/takeshi.css">
   <!-- line-awesome読み込み -->
   <link rel="stylesheet" href="https://maxst.icons8.com/vue-static/landings/line-awesome/line-awesome/1.3.0/css/line-awesome.min.css">
+
 </head>
 
 <body>
   <div id="wrapper_y">
-
     <!-- ヘッダーの読み込み -->
     <?php include('header_takeshi.php'); ?>
-
     <div class="main_contents">
 
-      <!-- 入力フォーム -->
-      <form action="room_create.php" method="post">
 
-        <!-- ルームネームを入力 -->
-        <div>
-          <p>トークルーム名</p>
-          <input type="text" name="room_name" id="create_room" required>
-        </div>
 
-        <!-- 部屋のタイプを選択 -->
-        <div id="select_type">
-          <label><input type="radio" name="room_type" value="0">グループ</label>
-          <label><input type="radio" name="room_type" value="1">プライベート</label>
-        </div>
 
-        <!-- 作成ボタン -->
-        <button type="submit" id="room_create_btn">作成</button>
-
-      </form>
     </div>
-    <!--main_contentsここまで -->
+    <!-- main_contentsここまで -->
 
     <!-- フッターの読み込み -->
     <?php include('footer_takeshi.php'); ?>
-
   </div>
   <!--wrapperここまで -->
 
@@ -81,7 +84,6 @@ $username = $_SESSION['username'];
   <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
   <!-- takeshi.js読み込み -->
   <script src="./js/takeshi.js"></script>
-
 </body>
 
 </html>

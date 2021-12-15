@@ -3,18 +3,21 @@
 <!-- ハンバーガーメニューの内容 -->
 <div id="menu_contents">
   <div id="my_acount">
-    <img src=<?= htmlspecialchars($imgUrl, ENT_QUOTES) ?> class="profile_img">
+    <img src=<?= htmlspecialchars($_SESSION['imgUrl'], ENT_QUOTES) ?> class="profile_img">
     <div><?= htmlspecialchars($username, ENT_QUOTES) ?></div>
   </div>
 
   <div id="menu_list">
     <ul>
+      <a href="../profile/profile_page.php?key=<?= htmlspecialchars($_SESSION['user_id'], ENT_QUOTES) ?>">
+        <li>マイプロフィール</li>
+      </a>
       <a href="../Profile/profile_edit.php">
         <li>プロフィール編集</li>
       </a>
-      <li>hoge</li>
-      <li>hoge</li>
-      <li>hoge</li>
+      <li>お気に入り</li>
+      <li>設定</li>
+      <li>ヘルプ</li>
     </ul>
     <!-- ログアウトボタン -->
     <div id="logout_btn">
@@ -43,7 +46,7 @@
   <!-- ヘッダー右側 -->
   <div id="header_right">
     <!-- プロフィール画像表示部分 -->
-    <img src=<?= htmlspecialchars($imgUrl, ENT_QUOTES) ?> class="profile_img" id="my_img">
+    <img src=<?= htmlspecialchars($_SESSION['imgUrl'], ENT_QUOTES) ?> class="profile_img" id="my_img">
     <!-- ハンバーガーメニューボタン -->
     <div class="las la-bars" id="hamburger"></div>
   </div>
