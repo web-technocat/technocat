@@ -23,6 +23,7 @@ if (
   !isset($_POST['birth']) || $_POST['birth'] == '' ||
   !isset($_POST['language']) || $_POST['language'] == '' ||
   !isset($_POST['hobby']) || $_POST['hobby'] == '' ||
+  !isset($_POST['self_introduction']) || $_POST['self_introduction'] == '' ||
   !isset($_POST['user_id']) || $_POST['user_id'] == ''
 ) {
   echo json_encode(["error_msg" => "no input"]);
@@ -34,6 +35,7 @@ $gender = $_POST['gender'];
 $birth = $_POST['birth'];
 $language = $_POST['language'];
 $hobby = $_POST['hobby'];
+$self_introduction = $_POST['self_introduction'];
 $user_id = $_POST['user_id'];
 
 
@@ -86,7 +88,7 @@ $pdo = connect_to_db();
 
 
   //SQL作成
-  $sql = "INSERT INTO profile_table(id, gender, birth, language,hobby,image,user_id,created_at,updated_at) VALUES(NULL,:gender,:birth,:language,:hobby,:image,:user_id,now(), now())";
+  $sql = "INSERT INTO profile_table(id, gender, birth, language,hobby,image,self_introduction,user_id,created_at,updated_at) VALUES(NULL,:gender,:birth,:language,:hobby,:image,:self_introduction,:user_id,now(), now())";
 
   //SQL準備
   $stmt = $pdo->prepare($sql);
@@ -96,6 +98,7 @@ $pdo = connect_to_db();
   $stmt->bindValue(':language', $language, PDO::PARAM_STR);
   $stmt->bindValue(':hobby', $hobby, PDO::PARAM_STR);
   $stmt->bindValue(':image', $save_path, PDO::PARAM_STR);
+  $stmt->bindValue(':self_introduction', $self_introduction, PDO::PARAM_STR);
   $stmt->bindValue(':user_id', $user_id, PDO::PARAM_STR);
   //SQL実行
   try {
