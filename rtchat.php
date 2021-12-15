@@ -1,3 +1,13 @@
+<?php
+session_start();
+include('chat_functions.php');
+check_session_id();
+$user_id = $_SESSION['user_id'];
+$room_id = $_SESSION['room_id'];
+$username = $_SESSION['username'];
+
+?>
+
 <!DOCTYPE html>
 <html lang="ja">
 <head>
@@ -5,21 +15,33 @@
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Chat</title>
-    <link href="https://use.fontawesome.com/releases/v5.6.1/css/all.css" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://maxst.icons8.com/vue-static/landings/line-awesome/line-awesome/1.3.0/css/line-awesome.min.css">
     <link href="https://cdnjs.cloudflare.com/ajax/libs/lightbox2/2.7.1/css/lightbox.css" rel="stylesheet">
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.1.1/jquery.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/lightbox2/2.7.1/js/lightbox.min.js" type="text/javascript"></script>
 <style type="text/css">
+        /* Fonts */
+        @import url(https://fonts.googleapis.com/css?family=Open+Sans:400);
+
+        /* fontawesome */
+        @import url(http://weloveiconfonts.com/api/?family=fontawesome);
+        [class*="fontawesome-"]:before {
+        font-family: 'FontAwesome', sans-serif;
+        }
+
+
+
         body {
             padding: 0;
             margin: 0 auto;
             width: 375px;
+            font: 400 87.5%/1.5em 'Open Sans', sans-serif;
         }
 
-        a, button{
+        button{
             cursor: pointer;
             text-decoration: none;
-            color: black;
         }
 
         header {
@@ -31,6 +53,11 @@
             justify-content: space-between;
             align-items: center;
             background: white;
+        }
+
+        header a {
+            text-decoration: none;
+            color: black;
         }
 
         header div {
@@ -92,10 +119,20 @@
             margin-left: auto;
         }
 
+        .my-log a {
+            text-decoration: none;
+            color: white;
+        }
+
         .other-log {
             background: #EAEBEB;
             color: black;
             margin-right: auto;
+        }
+
+        .other-log a {
+            text-decoration: none;
+            color: black;
         }
 
         .chat-input {
@@ -108,12 +145,11 @@
 
         .chat-container {
             display: flex;
+            -webkit-display: flex;
             align-items: center;
             justify-content: center;
             padding: 8px 0;
         }
-
-
 
         .chat-input > div > textarea {
             width: calc(64% + 32px);
@@ -167,39 +203,81 @@
         #send.active {
             display: flex;
         }
+
+        /* リストの点を消す */
+        li {
+        list-style: none;
+        }
+
+        /* ボタンのカーソル設定 */
+        .btn {
+        cursor: pointer;
+        }
+
+        /* ボタンのスタイルをリセット */
+        button {
+            background: none;
+            border: none;
+            outline: none;
+            -webkit-appearance: none;
+            -moz-appearance: none;
+            appearance: none;
+        }
+        /* -----固定フッター部分 --------------------------------------------*/
+
         /* フッター全体 */
         .footer_y {
-            position: fixed;
-            bottom: 0;
-            z-index: 10px;
+        position: fixed;
+        bottom: 0;
+        z-index: 10;
+        }
+
+        footer a:link, footer a:visited, footer a:hover,footer a:active {
+            text-decoration: none;
+            color: #5e5e5e;
         }
 
         #footer_contents {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            background-color: lightgray;
-            width: 375px;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        background-color: lightgray;
+        width: 375px;
         }
 
         /* フッターボタン */
         .footer_btn {
-            border: 1px solid #000;
-            height: 64px;
-            width: 25%;
+        height: 64px;
+        width: 25%;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        flex-direction:column;
+        }
+
+        .footer_btn p {
+        font-size: 8px;
+        margin: 0;
+        }
+
+        /*フッターアイコン */
+        .la-home,
+        .la-envelope,
+        .la-user-friends {
+        font-size: 40px;
         }
 </style>
 </head>
 <body>
     <header>
         <div>
-            <a href="room_list.php">
+            <a href="takeshi/check_out.php">
                 <p>退出</p>
             </a>
         </div>
         <h2>チャット</h2>
         <div>
-            <p>ユーザー名</p>
+            <p><?=$username?></p>
         </div>
     </header>
     <main>
@@ -219,16 +297,11 @@
         </div>
     </main>
 
-    <footer class="footer_y">
-        <div id="footer_contents">
-            <div class="footer_btn">ボタン1</div>
-            <div class="footer_btn">ボタン2</div>
-            <div class="footer_btn">ボタン3</div>
-        </div>
-    </footer>
+    <?php include('takeshi/footer_takeshi.php'); ?>
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
     <script type="text/javascript">
+        // チャットログを取得しhtmlに出力する関数の定義
         function getLog() {
             axios
                 .get('chat-get.php')
@@ -236,7 +309,7 @@
                     const array = [];
                     response.data.forEach(value => {
                         const date = new Date().getTime();
-                        const timestamp = new Date(value.created_at).getTime();
+                        const timestamp = new Date(value.created_at.replace(/-/g,"/")).getTime();
                         const time_diff = (date - timestamp) / 1000;
                         let result_time_diff;
                         if (Math.floor(time_diff / 60) == 0) {
@@ -251,21 +324,23 @@
                             const date_diff = Math.floor(time_diff / 86400);
                             result_time_diff = `${date_diff}日前に`;
                         }
-                        if (value.user_id == 1) {
+                        if (value.user_id == '<?php echo $_SESSION["user_id"]; ?>') {
                             const newText = AutoLink(value.text);
-                            array.push(`<div class='log my-log'><p>${value.user_id}<span> ${result_time_diff}投稿</span></p><p class='oritext'>${newText}</p><p>${value.trans_text}</p><div>`);
                             if (newText.includes('<a href')){
-                                const data = {
-                                    key: '343f9edd1eaa37dcbaacb5482a884a71',
-                                    q: value.text
-                                }
-                                fetch('https://api.linkpreview.net', {
-                                    method: 'POST',
-                                    mode: 'cors',
-                                    body: JSON.stringify(data),
-                                })
-                                .then(data => data.json())
-                                .then(json => array.push(`<div class='log my-log'><a href='${json.url}' target='_blank'><img src='${json.image}' width='187.5'><p>${json.title}</p></a>`));
+                            //     const data = {
+                            //         key: '343f9edd1eaa37dcbaacb5482a884a71',
+                            //         q: value.text
+                            //     }
+                            //     fetch('https://api.linkpreview.net', {
+                            //         method: 'POST',
+                            //         mode: 'cors',
+                            //         body: JSON.stringify(data),
+                            //     })
+                            //     .then(data => data.json())
+                            //     .then(json => array.push(`<div class='log my-log'><p>${value.username}<span> ${result_time_diff}投稿</span></p><p class='oritext'>${newText}</p><a href='${json.url}' target='_blank'><img src='${json.image}' width='187.5'><p>${json.title}</p></a>`));
+                                array.push(`<div class='log my-log'><p>${value.username}<span> ${result_time_diff}投稿</span></p><p class='oritext'>${newText}</p><div>`);
+                            } else {
+                                array.push(`<div class='log my-log'><p>${value.username}<span> ${result_time_diff}投稿</span></p><p class='oritext'>${newText}</p><p>${value.trans_text}</p><div>`);
                             }
                             if (value.upfile !== null) {
                                 const fileType = value.upfile.split('.').pop();
@@ -280,19 +355,20 @@
                         } else {
                             const newText = AutoLink(value.text);
                             if (newText.includes('<a href')){
-                                const data = {
-                                    key: '343f9edd1eaa37dcbaacb5482a884a71',
-                                    q: value.text
-                                }
-                                fetch('https://api.linkpreview.net', {
-                                    method: 'POST',
-                                    mode: 'cors',
-                                    body: JSON.stringify(data),
-                                })
-                                .then(data => data.json())
-                                .then(json => array.push(`<div class='log other-log'><p>${value.user_id}<span> ${result_time_diff}投稿</span></p><p class='oritext'>${newText}</p><a href='${json.url}' target='_blank'><img src='${json.image}' width='187.5'><p>${json.title}</p></a>`));
+                            //     const data = {
+                            //         key: '343f9edd1eaa37dcbaacb5482a884a71',
+                            //         q: value.text
+                            //     }
+                            //     fetch('https://api.linkpreview.net', {
+                            //         method: 'POST',
+                            //         mode: 'cors',
+                            //         body: JSON.stringify(data),
+                            //     })
+                            //     .then(data => data.json())
+                            //     .then(json => array.push(`<div class='log other-log'><p>${value.username}<span> ${result_time_diff}投稿</span></p><p class='oritext'>${newText}</p><a href='${json.url}' target='_blank'><img src='${json.image}' width='187.5'><p>${json.title}</p></a>`));
+                                array.push(`<div class='log other-log'><p>${value.username}<span> ${result_time_diff}投稿</span></p><p class='oritext'>${newText}</p><div>`);
                             } else {
-                                array.push(`<div class='log other-log'><p>${value.user_id}<span> ${result_time_diff}投稿</span></p><p class='oritext'>${newText}</p><p>${value.trans_text}</p><div>`);
+                                array.push(`<div class='log other-log'><p>${value.username}<span> ${result_time_diff}投稿</span></p><p class='oritext'>${newText}</p><p>${value.trans_text}</p><div>`);
                             }
                             if (value.upfile !== null) {
                                 const fileType = value.upfile.split('.').pop();
@@ -305,11 +381,9 @@
                                 }
                             }
                         }
-                    });
-                    setTimeout(function(){
                         $('#output').html(array);
                         $('#output')[0].scrollIntoView(false);
-                    }, 1000)
+                    });
                 });
         }
 
@@ -369,14 +443,14 @@
 
         function send() {
             const text = $('#text-form').val();
-            console.log(text);
+            // console.log(text);
             if (text !== '') {
                 const textFormData = new FormData();
                 textFormData.append('text', text);
                 axios
                     .get(`translate.php?text=${text}`)
                     .then(function (response) {
-                        // console.log(response);
+                        console.log(response);
                         const transTextFormData = new FormData();
                         transTextFormData.append('text', text);
                         transTextFormData.append('trans-text', response.data);
@@ -388,7 +462,7 @@
                             headers: { "Content-Type": "multipart/form-data" },
                         })
                             .then(function (response) {
-                                // console.log(response);
+                                console.log(response);
                                 const array = [];
                                 console.log(response.data);
                                 response.data.forEach(value => {
@@ -408,21 +482,24 @@
                                         const date_diff = Math.floor(time_diff / 86400);
                                         result_time_diff = `${date_diff}日前に`;
                                     }
-                                    if (value.user_id == 1) {
+                                    if (value.user_id == '<?php echo $_SESSION["user_id"]; ?>') {
                                         const newText = AutoLink(value.text);
-                                        array.push(`<div class='log my-log'><p>${value.user_id}<span> ${result_time_diff}投稿</span></p><p class='oritext'>${newText}</p><p>${value.trans_text}</p><div>`);
+                                        // console.log(newText);
                                         if (newText.includes('<a href')){
-                                            const data = {
-                                                key: '343f9edd1eaa37dcbaacb5482a884a71',
-                                                q: value.text
-                                            }
-                                            fetch('https://api.linkpreview.net', {
-                                                method: 'POST',
-                                                mode: 'cors',
-                                                body: JSON.stringify(data),
-                                            })
-                                            .then(data => data.json())
-                                            .then(json => array.push(`<div class='log my-log'><a href='${json.url}' target='_blank'><img src='${json.image}' width='187.5'><p>${json.title}</p></a>`));
+                                        //     const data = {
+                                        //         key: '343f9edd1eaa37dcbaacb5482a884a71',
+                                        //         q: value.text
+                                        //     }
+                                        //     fetch('https://api.linkpreview.net', {
+                                        //         method: 'POST',
+                                        //         mode: 'cors',
+                                        //         body: JSON.stringify(data),
+                                        //     })
+                                        //     .then(data => data.json())
+                                        //     .then(json => array.push(`<div class='log my-log'><p>${value.username}<span> ${result_time_diff}投稿</span></p><p class='oritext'>${newText}</p><a href='${json.url}' target='_blank'><img src='${json.image}' width='187.5'><p>${json.title}</p></a>`));
+                                            array.push(`<div class='log my-log'><p>${value.username}<span> ${result_time_diff}投稿</span></p><p class='oritext'>${newText}</p><div>`);
+                                        } else {
+                                            array.push(`<div class='log my-log'><p>${value.username}<span> ${result_time_diff}投稿</span></p><p class='oritext'>${newText}</p><p>${value.trans_text}</p><div>`);
                                         }
                                         if (value.upfile !== null) {
                                             const fileType = value.upfile.split('.').pop();
@@ -437,22 +514,21 @@
                                     } else {
                                         const newText = AutoLink(value.text);
                                         if (newText.includes('<a href')){
-                                            const data = {
-                                                key: '343f9edd1eaa37dcbaacb5482a884a71',
-                                                q: value.text
-                                            }
-                                            fetch('https://api.linkpreview.net', {
-                                                method: 'POST',
-                                                mode: 'cors',
-                                                body: JSON.stringify(data),
-                                            })
-                                            .then(data => data.json())
-                                            .then(json => array.push(`<div class='log other-log'><p>${value.user_id}<span> ${result_time_diff}投稿</span></p><p class='oritext'>${newText}</p><a href='${json.url}' target='_blank'><img src='${json.image}' width='187.5'><p>${json.title}</p></a>`));
+                                        //     const data = {
+                                        //         key: '343f9edd1eaa37dcbaacb5482a884a71',
+                                        //         q: value.text
+                                        //     }
+                                        //     fetch('https://api.linkpreview.net', {
+                                        //         method: 'POST',
+                                        //         mode: 'cors',
+                                        //         body: JSON.stringify(data),
+                                        //     })
+                                        //     .then(data => data.json())
+                                        //     .then(json => array.push(`<div class='log other-log'><p>${value.username}<span> ${result_time_diff}投稿</span></p><p class='oritext'>${newText}</p><a href='${json.url}' target='_blank'><img src='${json.image}' width='187.5'><p>${json.title}</p></a>`));
 
+                                            array.push(`<div class='log other-log'><p>${value.username}<span> ${result_time_diff}投稿</span></p><p class='oritext'>${newText}</p><div>`);
                                         } else {
-                                            setTimeout(function(){
-                                                array.push(`<div class='log other-log'><p>${value.user_id}<span> ${result_time_diff}投稿</span></p><p class='oritext'>${newText}</p><p>${value.trans_text}</p><div>`);
-                                            }, 100);
+                                            array.push(`<div class='log other-log'><p>${value.username}<span> ${result_time_diff}投稿</span></p><p class='oritext'>${newText}</p><p>${value.trans_text}</p><div>`);
                                         }
                                         if (value.upfile !== null) {
                                             const fileType = value.upfile.split('.').pop();
@@ -465,12 +541,10 @@
                                             }
                                         }
                                     }
-                                });
-                                setTimeout(function(){
                                     $('#output').html(array);
                                     conn.send(text);
                                     $('#output')[0].scrollIntoView(false);
-                                }, 1000)
+                                });
                             })
                             .catch(function (error) {
                                 console.log('post error');
