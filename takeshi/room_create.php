@@ -62,7 +62,7 @@ $result = $stmt->fetch(PDO::FETCH_ASSOC);
 $_SESSION['room_id'] = $result['room_id'];
 
 //処理が終わったらチャットページに移動
-header("Location:takeshi.php");
+header("Location:../rtchat.php");
 exit();
 
 ?>
