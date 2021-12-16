@@ -62,12 +62,12 @@ $pdo = connect_to_db();
     $_SESSION['username'] = $val['username'];
     //管理者であれば、管理者専用画面に遷移
     if ($_SESSION['is_admin'] === '1') {
-      $url = 'https://technocat.lolipop.io/User/user_list.php';
+      $url = 'localhost/User/user_list.php';
       header("Location:" . $url);
       exit();
     } else {
       //ユーザーであれば、マイページへ遷移
-      $url = 'https://technocat.lolipop.io/Profile/profile_input.php';
+      $url = 'localhost/Profile/profile_input.php';
       header("Location:" . $url);
       exit();
     }
