@@ -404,9 +404,9 @@ $username = $_SESSION['username'];
 
         $(function () {
             getLog();
-            setInterval(function(){
-                getLog();
-            }, 10000);
+            // setInterval(function(){
+            //     getLog();
+            // }, 10000);
         });
 
         let upfile;
@@ -424,6 +424,31 @@ $username = $_SESSION['username'];
                 $('#text-form').removeClass('active');
             }
         });
+
+        var conn = "";
+
+        function open() {
+
+            conn = new WebSocket('ws://localhost:8080');
+
+            conn.onopen = function (e) {
+            };
+
+            conn.onerror = function (e) {
+                alert("エラーが発生しました");
+            };
+
+            conn.onmessage = function (e) {
+                console.log(e.data);
+                getLog();
+            };
+
+            conn.onclose = function () {
+                alert("切断しました");
+                setTimeout(open, 5000);
+            };
+
+        }
 
         function send() {
             const text = $('#text-form').val();
@@ -532,6 +557,7 @@ $username = $_SESSION['username'];
                                     }
                                 });
                                 $('#output').html(array);
+                                conn.send(text);
                                 $('#output')[0].scrollIntoView(false);
                                 upfile = null;
                             })
@@ -549,6 +575,12 @@ $username = $_SESSION['username'];
             }
 
         }
+
+        function close() {
+            conn.close();
+        }
+
+        open();
 
     </script>
 </body>
