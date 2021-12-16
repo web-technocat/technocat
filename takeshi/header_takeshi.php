@@ -9,7 +9,7 @@
 
   <div id="menu_list">
     <ul>
-      <a href="../profile/profile_page.php?key=<?= htmlspecialchars($_SESSION['user_id'], ENT_QUOTES) ?>">
+      <a href="../Profile/profile_page.php?key=<?= htmlspecialchars($_SESSION['user_id'], ENT_QUOTES) ?>">
         <li>マイプロフィール</li>
       </a>
       <a href="../Profile/profile_edit.php">

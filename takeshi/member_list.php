@@ -75,7 +75,7 @@ foreach ($members as $member) {
   $image = htmlspecialchars($member['image'], ENT_QUOTES);
 
   $member_list .= "
-    <a href=../profile/profile_page.php?key={$user_id}><li class=checkin_member><img src ={$image} class=profile_img>{$username}</li></a>
+    <a href=../Profile/profile_page.php?key={$user_id}><li class=checkin_member><img src ={$image} class=profile_img>{$username}</li></a>
   ";
 }
 
@@ -119,7 +119,7 @@ $username = $_SESSION['username'];
 
         <div id="host_view">
           <p>ホストユーザー</p>
-          <a href="../profile/profile_page.php?key=<?= htmlspecialchars($result['host_user'], ENT_QUOTES); ?>" id="host_user">
+          <a href="../Profile/profile_page.php?key=<?= htmlspecialchars($result['host_user'], ENT_QUOTES); ?>" id="host_user">
             <img src=<?= htmlspecialchars($result['image'], ENT_QUOTES); ?> class="profile_img" alt="プロフィール画像">
             <p><?= htmlspecialchars($result['username'], ENT_QUOTES); ?></p>
           </a>
