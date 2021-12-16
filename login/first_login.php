@@ -1,4 +1,3 @@
-<!-- ログイン確認ページ -->
 <?php
 // var_dump($_POST);
 // exit();
@@ -10,34 +9,33 @@ include('../functions.php');
 
 //-----バリデーション-----//
 //エラーメッセージ
-$err = [];
+// $err = [];
 //メールアドレス
-if (!$email = $_POST['email']) {
-  $err['email'] = 'メールアドレスを入力してください!!';
-  //sessionは連想配列
-}
-//パスワード
-if (!$password = $_POST['password']) {
-  $err['password'] = 'パスワードを入力してください!!';
-  //sessionは連想配列
-};
-
+// if (!$email = $_POST['email']) {
+//   $err['email'] = 'メールアドレスを入力してください!!';
+//   //sessionは連想配列
+// }
+// //パスワード
+// if (!$password = $_POST['password']) {
+//   $err['password'] = 'パスワードを入力してください!!';
+//   //sessionは連想配列
+// };
+$email = $_POST['email'];
+$password = $_POST['password'];
 //DB接続
 $pdo = connect_to_db();
 
 //-----ログイン時にエラーがあった場合にログインフォームに表示-----//
-if (count($err) > 0) {
-  //エラーがあった場合
-  //セッションにエラーメッセージを入れて、ログイン画面に戻す
-  $_SESSION = $err;
-  header('Location:../login/first_login_form.php');
-  return; //処理を止める
-};
-
-
+// if (count($err) > 0) {
+//   //エラーがあった場合
+//   //セッションにエラーメッセージを入れて、ログイン画面に戻す
+//   $_SESSION = $err;
+//   header('Location:../login/first_login_form.php');
+//   return; //処理を止める
+// };
 
 //-----ログイン成功時の処理-----//
-if (count($err) === 0) {
+// if (count($err) === 0) {
   //ログイン成功時の処理
   //SQL作成
   $sql = 'SELECT * FROM users_table WHERE email= :email';
@@ -64,11 +62,13 @@ if (count($err) === 0) {
     $_SESSION['username'] = $val['username'];
     //管理者であれば、管理者専用画面に遷移
     if ($_SESSION['is_admin'] === '1') {
-      header('Location:../User/user_list.php');
+      $url = 'https://technocat.lolipop.io/User/user_list.php';
+      header("Location:" . $url);
       exit();
     } else {
       //ユーザーであれば、マイページへ遷移
-      header("Location:../Profile/profile_input.php");
+      $url = 'https://technocat.lolipop.io/Profile/profile_input.php';
+      header("Location:" . $url);
       exit();
     }
   }
@@ -77,7 +77,7 @@ if (count($err) === 0) {
   //   echo "<a href=first_login_form.php>ログイン</a>";
   //   exit();
   // }
-}
+// }
 
 ?>
 

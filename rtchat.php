@@ -25,7 +25,7 @@ $username = $_SESSION['username'];
         @import url(https://fonts.googleapis.com/css?family=Open+Sans:400);
 
         /* fontawesome */
-        @import url(http://weloveiconfonts.com/api/?family=fontawesome);
+        @import url(https://weloveiconfonts.com/api/?family=fontawesome);
         [class*="fontawesome-"]:before {
         font-family: 'FontAwesome', sans-serif;
         }
@@ -302,6 +302,7 @@ $username = $_SESSION['username'];
     <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
     <script type="text/javascript">
         // チャットログを取得しhtmlに出力する関数の定義
+        let loadCount = 0;
         function getLog() {
             axios
                 .get('chat-get.php')
@@ -381,10 +382,14 @@ $username = $_SESSION['username'];
                                 }
                             }
                         }
-                        $('#output').html(array);
-                        $('#output')[0].scrollIntoView(false);
-                    });
                 });
+                $('#output').html(array);
+                // console.log(loadCount);
+                // if (loadCount === 0) {
+                    $('#output')[0].scrollIntoView(false);
+                // }
+                // loadCount++;
+            });
         }
 
         function AutoLink(text) {
@@ -399,6 +404,9 @@ $username = $_SESSION['username'];
 
         $(function () {
             getLog();
+            setInterval(function(){
+                getLog();
+            }, 10000);
         });
 
         let upfile;
@@ -416,30 +424,6 @@ $username = $_SESSION['username'];
                 $('#text-form').removeClass('active');
             }
         });
-        var conn = "";
-
-        function open() {
-
-            conn = new WebSocket('ws://localhost:8080');
-
-            conn.onopen = function (e) {
-            };
-
-            conn.onerror = function (e) {
-                alert("エラーが発生しました");
-            };
-
-            conn.onmessage = function (e) {
-                console.log(e.data);
-                getLog();
-            };
-
-            conn.onclose = function () {
-                alert("切断しました");
-                setTimeout(open, 5000);
-            };
-
-        }
 
         function send() {
             const text = $('#text-form').val();
@@ -454,7 +438,9 @@ $username = $_SESSION['username'];
                         const transTextFormData = new FormData();
                         transTextFormData.append('text', text);
                         transTextFormData.append('trans-text', response.data);
-                        transTextFormData.append('upfile', upfile);
+                        if (upfile !== null){
+                            transTextFormData.append('upfile', upfile);
+                        }
                         axios({
                             method: 'post',
                             url: 'chat-post.php',
@@ -467,7 +453,10 @@ $username = $_SESSION['username'];
                                 console.log(response.data);
                                 response.data.forEach(value => {
                                     const date = new Date().getTime();
-                                    const timestamp = new Date(value.created_at).getTime();
+                                    console.log(date);
+                                    console.log(value.created_at);
+                                    const timestamp = new Date(value.created_at.replace(/-/g,"/")).getTime();
+                                    console.log(timestamp);
                                     const time_diff = (date - timestamp) / 1000;
                                     let result_time_diff;
                                     if (Math.floor(time_diff / 60) == 0) {
@@ -541,10 +530,10 @@ $username = $_SESSION['username'];
                                             }
                                         }
                                     }
-                                    $('#output').html(array);
-                                    conn.send(text);
-                                    $('#output')[0].scrollIntoView(false);
                                 });
+                                $('#output').html(array);
+                                $('#output')[0].scrollIntoView(false);
+                                upfile = null;
                             })
                             .catch(function (error) {
                                 console.log('post error');
@@ -560,12 +549,6 @@ $username = $_SESSION['username'];
             }
 
         }
-
-        function close() {
-            conn.close();
-        }
-
-        open();
 
     </script>
 </body>

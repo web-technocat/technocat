@@ -5,6 +5,11 @@
         }
     },
     "require": {
-        "cboden/ratchet": "^0.4.3"
+        "cboden/ratchet": "*"
+    },
+    "config": {
+        "platform": {
+            "php": "7.4.25"
+        }
     }
 }

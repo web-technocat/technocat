@@ -11,6 +11,7 @@ function connect_to_db()
   $user = 'root';
   $pwd = '';
 
+
   // DB接続
   try {
     return new PDO($dbn, $user, $pwd);
@@ -43,7 +44,7 @@ function check_room_session_id()
   if (isset($_SESSION["room_id"])) {
     header('Location:../rtchat.php'); //チャット画面へ
     exit();
-  } 
+  }
 }
 
 ?>

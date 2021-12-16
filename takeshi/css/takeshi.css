@@ -3,7 +3,7 @@
 @import url(https://fonts.googleapis.com/css?family=Open+Sans:400);
 
 /* fontawesome */
-@import url(http://weloveiconfonts.com/api/?family=fontawesome);
+@import url(https://weloveiconfonts.com/api/?family=fontawesome);
 [class*="fontawesome-"]:before {
   font-family: 'FontAwesome', sans-serif;
 }
@@ -37,11 +37,11 @@ body {
 /* リンクのスタイルを初期化 */
 a:link,
 a:visited,
-a:hover, 
-a:active {  
-    text-decoration: none;  
-    color: #5e5e5e;  
-} 
+a:hover,
+a:active {
+    text-decoration: none;
+    color: #5e5e5e;
+}
 
 /* リストの点を消す */
 li {
@@ -184,7 +184,7 @@ header {
   margin-top: 64px;
   display: flex;
   justify-content: center;
-  
+
 }
 
 /* ログアウトボタン本体 */
