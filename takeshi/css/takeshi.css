@@ -240,6 +240,7 @@ header {
   display: flex;
   justify-content: flex-start;
   align-items: center;
+  margin-bottom: 24px;
 }
 
 /* トークルームタイプ表示部分 */
@@ -322,6 +323,7 @@ header {
   display: flex;
   justify-content: flex-start;
   align-items: center;
+  margin-bottom: 24px;
 }
 
 /* 参加メンバー一覧部分 */
