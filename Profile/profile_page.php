@@ -56,7 +56,7 @@ $record = $stmt->fetch(PDO::FETCH_ASSOC);
     @import url(https://fonts.googleapis.com/css?family=Open+Sans:400);
 
     /* fontawesome */
-    @import url(http://weloveiconfonts.com/api/?family=fontawesome);
+    @import url(https://weloveiconfonts.com/api/?family=fontawesome);
 
     [class*="fontawesome-"]:before {
       font-family: 'FontAwesome', sans-serif;

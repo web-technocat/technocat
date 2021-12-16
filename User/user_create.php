@@ -1,4 +1,3 @@
-<!-- 新規登録確認ページ -->
 <?php
 // var_dump($_POST);
 // exit();
@@ -71,8 +70,8 @@ try {
 }
 // 実行内容
 $member = $stmt->fetch(PDO::FETCH_ASSOC);
-var_dump($member);
-exit();
+// var_dump($member);
+// exit();
 
 if ($member['email'] === $email) {
   $message = "<p>同じメールアドレスが存在します．</p>";

@@ -6,6 +6,7 @@ function connect_to_db()
     $user = 'root';
     $pwd = '';
 
+
     try {
         return new PDO($dbn, $user, $pwd);
     } catch (PDOException $e) {
