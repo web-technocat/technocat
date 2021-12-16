@@ -95,12 +95,14 @@ $pdo = connect_to_db();
   <style>
     .container {
       text-align: center;
-      padding-top: 430px;
+      padding-top: 300px;
     }
 
     p {
       font-weight: bold;
       font-size: 40px;
+      line-height: 1.15;
+      height: 115px;
     }
 
     .button {

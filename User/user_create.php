@@ -124,6 +124,8 @@ $link = "<a href=../login/first_login_form.php class=button>Login</a>";
     p {
       font-weight: bold;
       font-size: 40px;
+      height: 105px;
+      line-height: 1.15;
     }
 
     .button {

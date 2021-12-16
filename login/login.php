@@ -95,33 +95,49 @@ if (count($err) === 0) {
   <style>
     .container {
       text-align: center;
-      padding-top: 430px;
+      padding-top: 360px;
     }
 
     p {
       font-weight: bold;
       font-size: 40px;
+      height: 60px;
+      line-height: 1;
     }
 
     .button {
       display: inline-block;
-      border-radius: 5%;/* 角丸       */
-      font-size: 18pt;/* 文字サイズ */
-      text-align: center;/* 文字位置   */
-      cursor: pointer;/* カーソル   */
-      padding: 12px 12px;/* 余白       */
-      background: #000066;/* 背景色     */
-      color: #ffffff !important;/* 文字色     */
-      line-height: 1em;/* 1行の高さ  */
-      transition: .3s;/* なめらか変化 */
-      box-shadow: 6px 6px 3px #666666;/* 影の設定 */
-      border: 2px solid #000066;/* 枠の指定 */
+      border-radius: 5%;
+      /* 角丸       */
+      font-size: 18pt;
+      /* 文字サイズ */
+      text-align: center;
+      /* 文字位置   */
+      cursor: pointer;
+      /* カーソル   */
+      padding: 12px 12px;
+      /* 余白       */
+      background: #000066;
+      /* 背景色     */
+      color: #ffffff !important;
+      /* 文字色     */
+      line-height: 1em;
+      /* 1行の高さ  */
+      transition: .3s;
+      /* なめらか変化 */
+      box-shadow: 6px 6px 3px #666666;
+      /* 影の設定 */
+      border: 2px solid #000066;
+      /* 枠の指定 */
     }
 
     .button:hover {
-      box-shadow: none;/* カーソル時の影消去 */
-      color: #000066 !important;/* 背景色     */
-      background: #ffffff;/* 文字色     */
+      box-shadow: none;
+      /* カーソル時の影消去 */
+      color: #000066 !important;
+      /* 背景色     */
+      background: #ffffff;
+      /* 文字色     */
     }
   </style>
 </head>
@@ -129,7 +145,8 @@ if (count($err) === 0) {
 <body>
   <div class="container">
     <?php if (!password_verify($_POST['password'], $val['password'])) : ?>
-      <p>ログイン情報に<br>誤りがあります</p>
+      <p>ログイン情報に</p><br>
+      <p>誤りがあります</p>
       <a href="./login_form.php" class="button">ログイン</a>
     <?php endif ?>
   </div>
